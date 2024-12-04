@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "appointment-app",
-    "slug": "appointment-app",
+    "slug": "appointment",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,16 +13,37 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourapp.identifier",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "NSUserTrackingUsageDescription": "This app uses notifications to keep you updated."
+      }
     },
     "android": {
+      "permissions": [
+        "NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "sarya.bk": "com.bilal.bk.appointment",
+      "package": "com.saryabk.appointment"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "059142f9-2e69-4e29-aa38-bb1f6393c954"
+      }
+    },
+    "owner": "saryabk"
   }
 }
