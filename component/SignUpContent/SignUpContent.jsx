@@ -1,50 +1,123 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import { useUser } from "../../context/useUser/useUser";
+import { useQueryClient } from "@tanstack/react-query";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { postSignUp } from "../../apiMethods/apiCall/post";
+import GlobalButton from "../GlobalButton/GlobalButton";
+import { t } from "i18next";
+
+// Validation Schema with Yup
+const SignUpSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
+});
 
 const SignUpContent = () => {
-  const {user,setMethodLogType,methodLogType} = useUser()
+  const { user, setMethodLogType, methodLogType,setUser } = useUser();
+  const [lod ,setLod] = useState(false)
+  const queryClient = useQueryClient()
+  const handleSignUp = async (values) => {
+    const sendData = {
+        email: 'blaloalbkre10@gmail.com',
+        password: '123robin123',
+    };
+    // const sendData = {
+    //   email: values.email,
+    //   password: values.password,
+    // };
+    console.log(sendData)
+    setLod(true);
+    const send = await postSignUp(sendData);
+    const S_Id = send?.res?.headers?.get('s_id');
+    if (S_Id) {
+        await AsyncStorage.setItem('s_id', JSON.stringify(S_Id));
+    }
+    if (send && send?.data?.data) {
+      setUser(send?.data?.data);
+      const userData = send?.data?.data;
+      if (userData) {
+          await AsyncStorage.setItem('user', JSON.stringify(userData));
+      } 
+      setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['account'] });
+      }, 100);
+    }
+    setLod(false); 
+  };
   return (
     <View style={styles.container}>
-      {/* Icon/Logo */}
-      <View style={styles.logoContainer}>
-        {/* Replace with your logo */}
-        <View style={styles.logo}>
-          <Text style={styles.logoText}>Logo</Text>
-        </View>
-      </View>
+      <Text style={styles.title}>Sign Up</Text>
+      <Formik
+        initialValues={{ email: "", password: "", confirmPassword: "" }}
+        // validationSchema={SignUpSchema}
+        onSubmit={handleSignUp}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#aaa"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+              />
+              {errors.email && touched.email && (
+                <Text style={styles.error}>{errors.email}</Text>
+              )}
+            </View>
 
-      {/* Form */}
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#6C6C6C"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#6C6C6C"
-          secureTextEntry
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          placeholderTextColor="#6C6C6C"
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.signUpButton}>
-          <Text style={styles.signUpButtonText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#aaa"
+                secureTextEntry
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+              />
+              {errors.password && touched.password && (
+                <Text style={styles.error}>{errors.password}</Text>
+              )}
+            </View>
 
-      {/* Footer */}
-      <View style={styles.footerContainer}>
-        <Text style={styles.footerText}>
-          Already have an account?{" "}
-          <Text onPress={() => {setMethodLogType('login')}} style={styles.signInText}>Sign in</Text>
-        </Text>
-      </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                placeholderTextColor="#aaa"
+                secureTextEntry
+                onChangeText={handleChange("confirmPassword")}
+                onBlur={handleBlur("confirmPassword")}
+                value={values.confirmPassword}
+              />
+              {errors.confirmPassword && touched.confirmPassword && (
+                <Text style={styles.error}>{errors.confirmPassword}</Text>
+              )}
+            </View>
+
+            <GlobalButton 
+            onPress={handleSubmit} 
+            loading={lod}
+            title={t("Sign Up")} />
+
+            <Text style={styles.footerText}>
+              Already have an account?{" "}
+              <Text style={styles.link}  onPress={() => setMethodLogType('login')}>Sign in</Text>
+            </Text>
+          </View>
+        )}
+      </Formik>
     </View>
   );
 };
@@ -52,62 +125,53 @@ const SignUpContent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#fff",
     justifyContent: "center",
   },
-  logoContainer: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    backgroundColor: "#C5A5FC",
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoText: {
-    color: "#FFFFFF",
-    fontSize: 18,
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
+    color: "#4A4A4A",
+    marginBottom: 20,
+    textAlign: "center",
   },
-  formContainer: {
-    flex: 2,
-    width: "80%",
+  inputContainer: {
+    marginBottom: 15,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#6C6C6C",
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginBottom: 15,
+    borderColor: "#6C63FF",
+    borderRadius: 8,
+    padding: 10,
     fontSize: 16,
+    color: "#000",
   },
-  signUpButton: {
-    backgroundColor: "#8146F0",
+  error: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
+  },
+  button: {
+    backgroundColor: "#6C63FF",
+    borderRadius: 8,
     paddingVertical: 15,
-    borderRadius: 10,
     alignItems: "center",
+    marginTop: 10,
   },
-  signUpButtonText: {
-    color: "#FFFFFF",
+  buttonText: {
+    color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
   },
-  footerContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    marginBottom: 20,
-  },
   footerText: {
+    marginTop: 20,
+    textAlign: "center",
     fontSize: 14,
-    color: "#6C6C6C",
+    color: "#4A4A4A",
   },
-  signInText: {
-    color: "#000080",
+  link: {
+    color: "#6C63FF",
     fontWeight: "bold",
   },
 });

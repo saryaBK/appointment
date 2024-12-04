@@ -10,40 +10,40 @@ import GlobalButton from "../GlobalButton/GlobalButton";
 import { t } from "i18next";
 
 const SignInContent = () => {
-  const [lod ,setLod] = useState(false)
-  const { user, setMethodLogType, methodLogType,setUser } = useUser();
-  const queryClient = useQueryClient()
-  // Validation Schema using Yup
+  const [lod, setLod] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState("en"); // الحالة لتتبع اللغة المختارة
+  const { user, setMethodLogType, methodLogType, setUser } = useUser();
+  const queryClient = useQueryClient();
+
   const SignInSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
   });
-   
-  // var sendData = {...values}
+
   const handleSignIn = async (values) => {
-    // var sendData  = {
-    //   username:'blaloalbkre@gmail.com',
-    //   password:'123robin123'
-    // }
+    const sendData = {
+      username: 'blaloalbkre@gmail.com',
+      password: '123robin123',
+    };
     // const sendData = {
     //   username: values.email,
     //   password: values.password,
     // };
-    // setLod(true);
-    // const send = await postLogIn(sendData);
-    // const S_Id = send?.res.headers.get('s_id');
-    // await AsyncStorage.setItem('s_id', JSON.stringify(S_Id));
-    // if (send && send?.data && send?.data?.data) {
-    //   setUser(send?.data?.data);
-    //   await AsyncStorage.setItem('user' , JSON.stringify(send?.data?.data)) 
-    //   setTimeout(() => {
-    //     queryClient.invalidateQueries({ queryKey: ['account'] });
-    //   }, 100);
-    // }
-    console.log('45')
+    setLod(true);
+    const send = await postLogIn(sendData);
+    const S_Id = send?.res?.headers?.get("s_id");
+    if (S_Id) {
+      await AsyncStorage.setItem("s_id", JSON.stringify(S_Id));
+    }
+    if (send && send?.data?.data) {
+      setUser(send?.data?.data);
+      const userData = send?.data?.data;
+      if (userData) {
+        await AsyncStorage.setItem("user", JSON.stringify(userData));
+      }
+    }
     setLod(false);
   };
-  
 
   return (
     <View style={styles.container}>
@@ -51,12 +51,11 @@ const SignInContent = () => {
 
       <Formik
         initialValues={{ email: "", password: "" }}
-        validationSchema={SignInSchema}
+        // validationSchema={SignInSchema}
         onSubmit={handleSignIn}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
           <View>
-            {/* Email Field */}
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -66,7 +65,6 @@ const SignInContent = () => {
             />
             {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
-            {/* Password Field */}
             <TextInput
               style={styles.input}
               placeholder="Password"
@@ -77,27 +75,47 @@ const SignInContent = () => {
             />
             {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
-            {/* Language Switch */}
             <View style={styles.langSwitch}>
-              <TouchableOpacity style={[styles.langButton, { backgroundColor: "#e5e5e5" }]}>
-                <Text style={styles.langText}>Arabic</Text>
+              <TouchableOpacity
+                style={[
+                  styles.langButton,
+                  { backgroundColor: currentLanguage === "ar" ? "#3f51b5" : "#e5e5e5" },
+                ]}
+                onPress={() => setCurrentLanguage("ar")}
+              >
+                <Text
+                  style={[
+                    styles.langText,
+                    { color: currentLanguage === "ar" ? "#fff" : "#000" },
+                  ]}
+                >
+                  Arabic
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.langButton, { backgroundColor: "#3f51b5" }]}>
-                <Text style={[styles.langText, { color: "#fff" }]}>English</Text>
+              <TouchableOpacity
+                style={[
+                  styles.langButton,
+                  { backgroundColor: currentLanguage === "en" ? "#3f51b5" : "#e5e5e5" },
+                ]}
+                onPress={() => setCurrentLanguage("en")}
+              >
+                <Text
+                  style={[
+                    styles.langText,
+                    { color: currentLanguage === "en" ? "#fff" : "#000" },
+                  ]}
+                >
+                  English
+                </Text>
               </TouchableOpacity>
             </View>
 
-            <GlobalButton 
-            onPress={handleSubmit} 
-            loading={lod}
-            title={t("Sign In")} />
+            <GlobalButton onPress={handleSubmit} loading={lod} title={t("Sign In")} />
 
             {/* Sign Up Link */}
             <Text style={styles.signupText}>
               Don’t have an account?{" "}
-              <Text style={styles.signupLink} 
-              onPress={() => setMethodLogType('signUp')}
-              >
+              <Text style={styles.signupLink} onPress={() => setMethodLogType("signUp")}>
                 Sign up
               </Text>
             </Text>
@@ -149,18 +167,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-  button: {
-    backgroundColor: "#6200ea",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   signupText: {
     textAlign: "center",
     marginTop: 20,
@@ -172,7 +178,3 @@ const styles = StyleSheet.create({
 });
 
 export default SignInContent;
-
-
-
-

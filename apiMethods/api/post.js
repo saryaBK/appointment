@@ -11,8 +11,6 @@ export const post = async ({ path,sendData, isExist}) => {
   };
   var s_id = await AsyncStorage.getItem('s_id');
   var jwt = await AsyncStorage.getItem('jwt');
-  console.log(s_id)
-  console.log(jwt)
   if (s_id) {
     headers.s_id = s_id;
   }

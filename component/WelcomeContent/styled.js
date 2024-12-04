@@ -6,7 +6,7 @@ export const Container = styled(View)`
   align-items: center;
   justify-content: space-between;
   background-color: ${(props) => props.theme.main};
-  padding: 50px 20px;
+  padding: 40px 20px;
 `;
 
 export const LogoContainer = styled(View)`

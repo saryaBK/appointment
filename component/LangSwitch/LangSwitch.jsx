@@ -8,7 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const LangSwitch = () => {
   const { lang, switchLang } = useLanguage();
   const [language, setLanguage] = useState( );
-  const {theme} = useTheme(); 
+  const { theme ,setIsEnabled,isEnabled} = useTheme();
 
   const toggleLanguage = () => {
     switchLang(lang === "en" ? "ar" : "en");
@@ -18,16 +18,19 @@ const LangSwitch = () => {
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.button,
-          { borderColor: theme.light_font }
+          { borderColor: isEnabled ? theme.main_light : theme.dark_font,
+            backgroundColor: isEnabled ? theme.main : theme.main_light,
+            borderWidth: 2,
+          }
         ,]}
         onPress={toggleLanguage}
       >
-        <Ionicons name="globe-outline" size={20} color={theme.main_light} />
+        <Ionicons name="globe-outline" size={25} color={isEnabled ? theme.main_light : theme.bg} />
         <Text 
-          style={[styles.text,{ color: theme.main_light }]}>
+          style={[styles.text,{ color: isEnabled ? theme.main_light : theme.bg }]}>
           {lang == 'ar' ? 'English' :'العربية'}
         </Text>
-        <Ionicons name="chevron-down-outline" size={20} color={theme.main_light} />
+        <Ionicons name="chevron-down-outline" size={25} color={isEnabled ? theme.main_light : theme.bg} />
       </TouchableOpacity>
     </View>
   );
@@ -45,9 +48,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap:7,
     borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 15,
+    borderRadius: 25,
+    paddingHorizontal: 8,
     paddingVertical: 10,
+    height:50
   },
   icon: {
     marginRight: 10,

@@ -1,25 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import GlobalButton from '../GlobalButton/GlobalButton';
 import { t } from 'i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../../context/useUser/useUser';
+import { postSignOut } from '../../apiMethods/apiCall/post';
 
 export default function ProfileContent() {
   const { user, setMethodLogType, methodLogType,setUser } = useUser();
+  const [lod ,setLod] = useState(false)
+  console.log(user)
 
-  const handleGetStarted = async ()=> {
-    setUser(null)
-    await AsyncStorage.removeItem('user');
-    await AsyncStorage.removeItem('s_id');
-    console.log('454')
+  const handleSubmit = async ()=> {
+    setLod(true)
+    const send = await postSignOut();
+    if(send && send.res && send.res.ok){
+      setUser(null)
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('s_id');
+    }
+    setLod(false)
+    
   }
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <Text style={styles.header}>My Profile</Text>
-      <GlobalButton onPress={handleGetStarted} title={t("Logout")} />
 
       {/* Profile Card */}
       <View style={styles.card}>
@@ -64,6 +72,10 @@ export default function ProfileContent() {
           </View>
         </View>
       </View>
+      <GlobalButton 
+        onPress={handleSubmit} 
+        loading={lod}
+        title={t("Sign out")} />
 
     </View>
   );
