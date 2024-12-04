@@ -12,11 +12,13 @@ import GlobalButton from "../GlobalButton/GlobalButton";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useLanguage } from "../../context/useLang/useLang";
 import useTheme from "../../context/useTheme/useTheme";
+import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton";
 
 export default function EmployeeDetailsContent({data}) {
   const { lang } = useLanguage();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
+  const {theme,toggleTheme} = useTheme();
   const [specifiedBookingDate, setspecifiedBookingDate] = useState('');
   var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
   var newDate = new Date(selectedDate).toLocaleDateString('en-CA', options).replace(/\//g, '-');
@@ -48,7 +50,6 @@ export default function EmployeeDetailsContent({data}) {
     enabled:id && newDate != 'Invalid Date' ? true : false
   });
 
-  const {theme} = useTheme();
   const Navigation = useNavigation()
 
   const handleGoBack = () => {
@@ -59,7 +60,7 @@ export default function EmployeeDetailsContent({data}) {
     <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
       <Header>
         <BackIcon>
-          <AntDesign onPress={handleGoBack} name={lang == 'ar'?"arrowright":"arrowleft"} size={24} color={theme.main_light} />
+          <AntDesign onPress={handleGoBack} name={lang == 'ar'?"arrowright":"arrowleft"} size={24} color={theme.light} />
         </BackIcon>
         <HeaderText>{(data?.name) ? data?.name : ''}</HeaderText>
       </Header>
@@ -76,17 +77,17 @@ export default function EmployeeDetailsContent({data}) {
           {data?.branch?.name && <Text style={[styles.BranchName]}>{t('branch')}</Text>}
           {data?.branch?.name && <Text style={[styles.BranchName,{color: theme.main_light }]}>{data.branch.name}</Text>}
           <View style={styles.employeeInfo}>
-          {data?.phone && <Text style={[styles.label]}>{t('Phone')}</Text>}
-          {data?.phone && <Text style={[styles.label,{color: theme.main_light }]}>{data.phone}</Text>}
+          {data?.mobile && <Text style={[styles.label]}>{t('Phone')}</Text>}
+          {data?.mobile && <Text style={[styles.label,{color: theme.main_light }]}>{data.mobile}</Text>}
           </View>
         </View>
       </Card>
 
-      <Text style={styles.sectionTitle}>{t('Choose available date')}</Text>
+      <Text style={[styles.sectionTitle, { color: theme.font_dark }]}>{t('Choose available date')}</Text>
 
       <View>
-        <Text style={styles.label}>Selected Date:</Text>
-        <Text style={[styles.date,{color: theme.main_light }]}>{newDate != 'Invalid Date'? newDate : 'No date selected'}</Text>
+        <Text style={[styles.label, { color: theme.font_dark }]}>Selected Date:</Text>
+        <Text style={[styles.date,{color: theme.font_dark }]}>{newDate != 'Invalid Date'? newDate : 'No date selected'}</Text>
         <GlobalButton width='100%' onPress={showDatePicker} title={t("Pick a Date")} />
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -94,7 +95,7 @@ export default function EmployeeDetailsContent({data}) {
           onConfirm={handleConfirm}
           onCancel={hideDatePicker}
           themeVariant="dark"
-          textColor="#1e90ff"
+          textColor="#04192d"
         />
       </View>
 
@@ -102,11 +103,11 @@ export default function EmployeeDetailsContent({data}) {
       {
         dateData && dateData.length > 0 ?
         <WrapperTime>
-        <Text style={styles.sectionTitle}>{t('Choose available time')}</Text>
+        <Text style={[styles.sectionTitle,{color: theme.font_dark }]}>{t('Choose available time')}</Text>
         <AppointmentTimeBar dateData={dateData} theme={theme} setspecifiedBookingDate={setspecifiedBookingDate}/>
         </WrapperTime>
       :
-      <Text style={styles.sectionTitle}>{t('There is no time available on this date')}</Text>
+      <Text style={[styles.sectionTitle, { color: theme.font_dark }]}>{t('There is no time available on this date')}</Text>
       }
       <View style={styles.sendWrapperBtn}>
       <GlobalButton width='100%' title={t("Reserve Appointment")} />
@@ -123,17 +124,14 @@ const styles = StyleSheet.create({
   },
   BranchName: {
     fontWeight: "bold",
-    color: "#333333",
   },
   employeeInfo: {
     fontSize: 14,
-    color: "#666666",
     flex:1,
     flexDirection:"column"
   },
   label: {
     fontWeight: "bold",
-    color: "#333333",
   },
   profileImage: {
     width: 80,
@@ -144,20 +142,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#000",
     marginBottom: 8,
     paddingTop:10
   },
   monthText: {
     fontSize: 14,
-    color: "#6A1B9A",
     marginBottom: 16,
   },
   dateList: {
     marginBottom: 16,
   },
   reserveButton: {
-    backgroundColor: "#8146F0",
     paddingVertical: 16,
     marginVertical:20,
     borderRadius: 8,
@@ -167,12 +162,10 @@ const styles = StyleSheet.create({
   reserveButtonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#FFF",
   },
   date: {
     fontSize: 16,
     marginBottom: 20,
-    color: '#555',
   },
   sendWrapperBtn:{
     top:0,

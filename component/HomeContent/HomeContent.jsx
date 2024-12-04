@@ -5,9 +5,11 @@ import { BranchDetails, BranchName, BranchNote, Card, FindText, ProfileImage, Wr
 import { useNavigation } from "@react-navigation/native";
 import { t } from "i18next";
 import useTheme from '../../context/useTheme/useTheme';
+import LangSwitch from '../LangSwitch/LangSwitch';
+import ThemeToggleButton from '../ThemeToggleButton/ThemeToggleButton';
 
 const HomeContent = ({data}) => {
-  const {theme} = useTheme();
+  const {theme ,toggleTheme} = useTheme();
   const Navigation = useNavigation()
 
   const handleGoDetails= ({item}) => {
@@ -53,10 +55,9 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 10,
     shadowColor: 'rgba(44, 44, 92, 1)',
-    elevation: 10, // للـ Android
+    elevation: 10, 
   },
   card: {
-    backgroundColor: '#ffffff',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

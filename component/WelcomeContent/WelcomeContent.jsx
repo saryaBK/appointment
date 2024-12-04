@@ -30,8 +30,8 @@ const WelcomeContent = () => {
   return (
     <Container style={{paddingTop: theme.mediumSize + 40}}>
       <View style={[styles.btnContainer]}>
-      <LangSwitch />
-      <ThemeToggleButton onToggle={toggleTheme} />
+      {/* <LangSwitch />*/}
+      <ThemeToggleButton onToggle={toggleTheme} /> 
       </View>
       <LogoContainer>
         <WelcomeLogo />

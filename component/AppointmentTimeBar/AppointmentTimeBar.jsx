@@ -10,7 +10,7 @@ const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate}) => {
       <TouchableOpacity
         style={[
           styles.itemContainer,
-          isSelected && { backgroundColor: theme.main },
+          isSelected && { backgroundColor: theme.dark_color },
         ]}
         onPress={() => {
             setSelectedTime(item.time)
@@ -20,7 +20,7 @@ const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate}) => {
         <Text
           style={[
             styles.itemText,
-            { color: isSelected ? theme.light_font : theme.main },
+            { color: isSelected ? theme.white_color : theme.dark_color },
           ]}
         >
           {item.time.substring(0, 5)}

@@ -8,7 +8,7 @@ const GlobalButton = ({ title, onPress, style, textStyle, disabled, loading }) =
     <TouchableOpacity
       style={[
         styles.button,
-        { backgroundColor: disabled ? '#A9A9A9' : theme.main_light },
+        { backgroundColor: disabled ? '#A9A9A9' : theme.light_color },
         style,
       ]}
       onPress={onPress}
@@ -16,9 +16,9 @@ const GlobalButton = ({ title, onPress, style, textStyle, disabled, loading }) =
       disabled={disabled || loading} // تعطيل الزر أثناء التحميل
     >
       {loading ? (
-        <ActivityIndicator size="small" color="#fff" /> // أيقونة التحميل
+        <ActivityIndicator size="small" color={theme.white_color} /> // أيقونة التحميل
       ) : (
-        <Text style={[styles.buttonText, textStyle]}>{title}</Text> // النص الأساسي
+        <Text style={[styles.buttonText,{color:theme.white_color}, textStyle]}>{title}</Text> // النص الأساسي
       )}
     </TouchableOpacity>
   );
@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

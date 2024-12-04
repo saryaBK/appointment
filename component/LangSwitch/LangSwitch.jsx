@@ -18,19 +18,19 @@ const LangSwitch = () => {
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.button,
-          { borderColor: isEnabled ? theme.main_light : theme.dark_font,
-            backgroundColor: isEnabled ? theme.main : theme.main_light,
+          { borderColor: theme.border_light,
+            backgroundColor: theme.light,
             borderWidth: 2,
           }
         ,]}
         onPress={toggleLanguage}
       >
-        <Ionicons name="globe-outline" size={25} color={isEnabled ? theme.main_light : theme.bg} />
+        <Ionicons name="globe-outline" size={25} color={theme.font_light} />
         <Text 
-          style={[styles.text,{ color: isEnabled ? theme.main_light : theme.bg }]}>
+          style={[styles.text,{ color: theme.font_light }]}>
           {lang == 'ar' ? 'English' :'العربية'}
         </Text>
-        <Ionicons name="chevron-down-outline" size={25} color={isEnabled ? theme.main_light : theme.bg} />
+        <Ionicons name="chevron-down-outline" size={25} color={theme.font_light} />
       </TouchableOpacity>
     </View>
   );

@@ -15,10 +15,11 @@ import { t } from "i18next";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useLanguage } from "../../context/useLang/useLang";
 import useTheme from "../../context/useTheme/useTheme";
+import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton";
 
 const BranchesDetailsContent = ({data}) => { 
   const Navigation = useNavigation()
-  const {theme} = useTheme();
+  const {theme,toggleTheme} = useTheme();
   const { lang } = useLanguage();
 
   const handleGoDetails= ({item}) => {
@@ -37,10 +38,11 @@ const BranchesDetailsContent = ({data}) => {
         )
       }
       <View style={styles.cardContent}>
-        {item?.name && <Text style={styles.employeeName}>{item.name}</Text>}
-        <Text style={styles.employeeInfo}>
-          {item?.phone && <Text style={[styles.label, { color: theme.main_light }]}>{t('Phone')}: {item.phone}</Text>}
-        </Text>
+        {item?.name && <Text style={[styles.employeeName,, { color: theme.dark_color }]}>{item.name}</Text>}
+        <View style={styles.employeeInfo}>
+          {item?.mobile&& <Text style={[styles.label, { color: theme.dark_color }]}>{t('Phone')}</Text>}
+          {item?.mobile&& <Text style={[styles.label, { color: theme.dark_color }]}> {item.mobile}</Text>}
+        </View>
       </View>
     </Card>
   );
@@ -49,11 +51,11 @@ const BranchesDetailsContent = ({data}) => {
     <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
       <Header>
         <BackIcon>
-        <AntDesign onPress={handleGoBack} name={lang == 'ar'?"arrowright":"arrowleft"} size={24} color={theme.main_light} />
+        <AntDesign onPress={handleGoBack} name={lang == 'ar'?"arrowright":"arrowleft"} size={24} color={theme.light} />
         </BackIcon>
         <HeaderText>{(data?.name) ? data?.name : ''}</HeaderText>
         <SearchIcon>
-          <Ionicons name="search" size={24} color={theme.main_light} />
+          <Ionicons name="search" size={24} color={theme.light} />
         </SearchIcon>
       </Header>
 
@@ -93,12 +95,13 @@ const styles = StyleSheet.create({
   employeeName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333333",
     marginBottom: 5,
   },
   employeeInfo: {
     fontSize: 14,
-    color: "#666666",
+    flex:1,
+    flexDirection:"column"
+    // color: "#666666",
   },
   label: {
     fontWeight: "bold",

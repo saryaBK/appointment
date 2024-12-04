@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity,Image } from 'react-native';
 
 export const Wrapper = styled(View)`
   flex: 1;
-  background-color: ${(props) => props.theme.bg};
+  background-color: ${(props) => props.theme.bg_dark};
   padding-left: 20px;
   padding-right: 20px;
 `;
@@ -14,19 +14,19 @@ export const BranchDetails = styled(View)`
 `;
 export const BranchName = styled(Text)`
   font-size: ${(props) => `${props.theme.large}px`};
-  color:${(props) => props.theme.dark_font};
+  color:${(props) => props.theme.dark_color};
   font-weight:bold;
 `;
 export const BranchNote = styled(Text)`
   font-size: ${(props) => `${props.theme.large}px`};
-  color:${(props) => props.theme.dark_font};
+  color:${(props) => props.theme.dark_color};
 `;
 
 export const FindText = styled(Text)`
   font-size: ${(props) => `${props.theme.large}px`};
   font-weight:bold;
-  color:${(props) => props.theme.main_light_font};
-  padding-bottom:10px
+  color:${(props) => props.theme.light};
+  padding-bottom:10px;
 `;
 export const Card = styled(TouchableOpacity)`
   flex: 1;
@@ -35,6 +35,7 @@ export const Card = styled(TouchableOpacity)`
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 16px;
+  background-color:${(props) => props.theme.bg_light} ;
   /* align-items: center; */
 `;
 

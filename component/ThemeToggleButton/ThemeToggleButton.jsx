@@ -10,7 +10,7 @@ const ThemeToggleButton = ({ onToggle }) => {
   const translateX = useRef(new Animated.Value(0)).current;
 
   const toggleSwitch = () => {
-    const toValue = isEnabled ? 0 : 70; 
+    const toValue = isEnabled ? 0 : 0; 
     Animated.timing(translateX, {
       toValue,
       duration: 300,
@@ -26,8 +26,8 @@ const ThemeToggleButton = ({ onToggle }) => {
       style={[
         styles.container,
         {
-          backgroundColor: isEnabled ? theme.main : theme.main_light,
-          borderColor: isEnabled ? theme.main_light : theme.dark_font,
+          backgroundColor: theme.light,
+          borderColor: theme.border_light,
           borderWidth: 2,
         },
       ]}
@@ -37,7 +37,7 @@ const ThemeToggleButton = ({ onToggle }) => {
         style={[
           styles.toggleCircle,
           {
-            backgroundColor: isEnabled ? theme.main_light : theme.dark_font,
+            backgroundColor: theme.border_dark,
             transform: [{ translateX }],
           },
         ]}
@@ -45,7 +45,7 @@ const ThemeToggleButton = ({ onToggle }) => {
         <Octicons 
         name={isEnabled ? "moon" : "sun"} 
         size={24} 
-        color={isEnabled ? theme.main : theme.bg} 
+        color={theme.white_color}
         />
       </Animated.View>
     </TouchableOpacity>
@@ -54,7 +54,7 @@ const ThemeToggleButton = ({ onToggle }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 120,
+    width: 50,
     height: 50,
     borderRadius: 25,
     padding:5
