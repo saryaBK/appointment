@@ -33,7 +33,17 @@ export default function App() {
 
   const [expoPushToken, setExpoPushToken] = useState("");
 
+  // إعداد الإشعارات
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+
   useEffect(() => {
+    // تسجيل التوكن وإعداد المستمعات
     registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
 
     const notificationListener = Notifications.addNotificationReceivedListener((notification) => {
@@ -56,7 +66,7 @@ export default function App() {
       await Notifications.setNotificationChannelAsync("default", {
         name: "default",
         importance: Notifications.AndroidImportance.MAX,
-        sound: 'notification.mp3'
+        sound: "notification.mp3",
       });
     }
 
@@ -96,7 +106,6 @@ export default function App() {
       </Stack.Navigator>
     );
   }
-
 
   function ProfileStack() {
     return (
@@ -142,27 +151,24 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-      <UserContext>
-        <ThemeProvider>
-          <StatusBar style="auto" animated={true} />
-          <NavigationContainer>
-            <Stack.Navigator
-              initialRouteName="Welcome"
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="Welcome" component={Welcome} />
-              <Stack.Screen name="Main" component={BottomTabs} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </ThemeProvider>
+        <UserContext>
+          <ThemeProvider>
+            <StatusBar style="auto" animated={true} />
+            <NavigationContainer>
+              <Stack.Navigator
+                initialRouteName="Welcome"
+                screenOptions={{
+                  headerShown: false,
+                }}
+              >
+                <Stack.Screen name="Welcome" component={Welcome} />
+                <Stack.Screen name="Main" component={BottomTabs} />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </ThemeProvider>
         </UserContext>
         <Toast />
       </LanguageProvider>
     </QueryClientProvider>
   );
 }
-
-
-
