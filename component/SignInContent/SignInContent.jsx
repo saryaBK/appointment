@@ -8,12 +8,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { postLogIn } from "../../apiMethods/apiCall/post";
 import GlobalButton from "../GlobalButton/GlobalButton";
 import { t } from "i18next";
+import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton";
+import useTheme from "../../context/useTheme/useTheme";
+import WelcomeLogo from "../../assets/Icons/WelcomeLogo";
+import { useLanguage } from "../../context/useLang/useLang";
 
 const SignInContent = () => {
   const [lod, setLod] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState("en"); // الحالة لتتبع اللغة المختارة
   const { user, setMethodLogType, methodLogType, setUser } = useUser();
+  const { lang, switchLang } = useLanguage();
   const queryClient = useQueryClient();
+  const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
 
   const SignInSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -46,8 +52,10 @@ const SignInContent = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign In</Text>
+    <View style={[styles.container,{backgroundColor:theme.bg_dark}]}>
+     <View style={{display:"flex",alignItems:"center"}}>
+     <WelcomeLogo />
+     </View>
 
       <Formik
         initialValues={{ email: "", password: "" }}
@@ -57,7 +65,15 @@ const SignInContent = () => {
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
           <View>
             <TextInput
-              style={styles.input}
+              // style={styles.input}
+              style={[
+                styles.input,
+                { 
+                  backgroundColor: theme.white_color,
+                  color: theme.dark_color, 
+                  borderColor:theme.border_dark
+                },
+              ]}
               placeholder="Email"
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
@@ -66,7 +82,14 @@ const SignInContent = () => {
             {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { 
+                  backgroundColor: theme.white_color,
+                  color: theme.dark_color,
+                  borderColor:theme.border_dark
+                },
+              ]}
               placeholder="Password"
               secureTextEntry
               onChangeText={handleChange("password")}
@@ -79,14 +102,14 @@ const SignInContent = () => {
               <TouchableOpacity
                 style={[
                   styles.langButton,
-                  { backgroundColor: currentLanguage === "ar" ? "#3f51b5" : "#e5e5e5" },
+                  { backgroundColor: lang === "ar" ? "#3f51b5" : "#e5e5e5" },
                 ]}
-                onPress={() => setCurrentLanguage("ar")}
+                onPress={() => switchLang("ar")}
               >
                 <Text
                   style={[
                     styles.langText,
-                    { color: currentLanguage === "ar" ? "#fff" : "#000" },
+                    { color: lang === "ar" ? "#fff" : "#000" },
                   ]}
                 >
                   Arabic
@@ -95,14 +118,15 @@ const SignInContent = () => {
               <TouchableOpacity
                 style={[
                   styles.langButton,
-                  { backgroundColor: currentLanguage === "en" ? "#3f51b5" : "#e5e5e5" },
+                  { backgroundColor: lang === "en" ? "#3f51b5" : "#e5e5e5" ,
+                  },
                 ]}
-                onPress={() => setCurrentLanguage("en")}
+                onPress={() => switchLang("en")}
               >
                 <Text
                   style={[
                     styles.langText,
-                    { color: currentLanguage === "en" ? "#fff" : "#000" },
+                    { color: lang === "en" ? "#fff" : "#000" },
                   ]}
                 >
                   English
@@ -113,9 +137,9 @@ const SignInContent = () => {
             <GlobalButton onPress={handleSubmit} loading={lod} title={t("Sign In")} />
 
             {/* Sign Up Link */}
-            <Text style={styles.signupText}>
-              Don’t have an account?{" "}
-              <Text style={styles.signupLink} onPress={() => setMethodLogType("signUp")}>
+            <Text style={[styles.signupText,{color:theme.font_dark}]}>
+              Don’t have an account ? {" "}
+              <Text style={[styles.signupLink,{color:theme.border_dark}]} onPress={() => setMethodLogType("signUp")}>
                 Sign up
               </Text>
             </Text>
@@ -129,9 +153,9 @@ const SignInContent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     justifyContent: "center",
     padding: 20,
+    gap:20
   },
   title: {
     fontSize: 24,
@@ -172,7 +196,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   signupLink: {
-    color: "#6200ea",
     fontWeight: "bold",
   },
 });

@@ -6,7 +6,7 @@ export const Wrapper = styled(View)`
   background-color: ${(props) => props.theme.bg_dark};
   padding-left: 20px;
   padding-right: 20px;
-  margin-bottom: 30px;
+  padding-bottom: 30px;
 `;
 
 export const Header = styled(View)`

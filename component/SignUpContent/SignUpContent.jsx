@@ -8,6 +8,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { postSignUp } from "../../apiMethods/apiCall/post";
 import GlobalButton from "../GlobalButton/GlobalButton";
 import { t } from "i18next";
+import WelcomeLogo from "../../assets/Icons/WelcomeLogo";
+import useTheme from "../../context/useTheme/useTheme";
 
 // Validation Schema with Yup
 const SignUpSchema = Yup.object().shape({
@@ -24,16 +26,16 @@ const SignUpContent = () => {
   const { user, setMethodLogType, methodLogType,setUser } = useUser();
   const [lod ,setLod] = useState(false)
   const queryClient = useQueryClient()
+  const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
   const handleSignUp = async (values) => {
-    const sendData = {
-        email: 'blaloalbkre10@gmail.com',
-        password: '123robin123',
-    };
     // const sendData = {
-    //   email: values.email,
-    //   password: values.password,
+    //     email: 'blaloalbkre10@gmail.com',
+    //     password: '123robin123',
     // };
-    console.log(sendData)
+    const sendData = {
+      email: values.email,
+      password: values.password,
+    };
     setLod(true);
     const send = await postSignUp(sendData);
     const S_Id = send?.res?.headers?.get('s_id');
@@ -53,8 +55,10 @@ const SignUpContent = () => {
     setLod(false); 
   };
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+    <View style={[styles.container,{backgroundColor:theme.bg_dark}]}>
+      <View style={{display:"flex",alignItems:"center"}}>
+        <WelcomeLogo />
+     </View>
       <Formik
         initialValues={{ email: "", password: "", confirmPassword: "" }}
         // validationSchema={SignUpSchema}
@@ -64,7 +68,14 @@ const SignUpContent = () => {
           <View>
             <View style={styles.inputContainer}>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  { 
+                    backgroundColor: theme.white_color,
+                    color: theme.dark_color, 
+                    borderColor:theme.border_dark
+                  },
+                ]}
                 placeholder="Email"
                 placeholderTextColor="#aaa"
                 onChangeText={handleChange("email")}
@@ -78,7 +89,14 @@ const SignUpContent = () => {
 
             <View style={styles.inputContainer}>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  { 
+                    backgroundColor: theme.white_color,
+                    color: theme.dark_color, 
+                    borderColor:theme.border_dark
+                  },
+                ]}
                 placeholder="Password"
                 placeholderTextColor="#aaa"
                 secureTextEntry
@@ -93,7 +111,14 @@ const SignUpContent = () => {
 
             <View style={styles.inputContainer}>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  { 
+                    backgroundColor: theme.white_color,
+                    color: theme.dark_color, 
+                    borderColor:theme.border_dark
+                  },
+                ]}
                 placeholder="Confirm Password"
                 placeholderTextColor="#aaa"
                 secureTextEntry
@@ -111,9 +136,9 @@ const SignUpContent = () => {
             loading={lod}
             title={t("Sign Up")} />
 
-            <Text style={styles.footerText}>
-              Already have an account?{" "}
-              <Text style={styles.link}  onPress={() => setMethodLogType('login')}>Sign in</Text>
+            <Text style={[styles.footerText,{color:theme.font_dark}]}>
+              Already have an account ? {" "}
+              <Text style={[styles.link,{color:theme.border_dark}]} onPress={() => setMethodLogType('login')}>Sign in</Text>
             </Text>
           </View>
         )}
@@ -125,9 +150,9 @@ const SignUpContent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
     justifyContent: "center",
+    padding: 20,
+    gap:20
   },
   title: {
     fontSize: 24,

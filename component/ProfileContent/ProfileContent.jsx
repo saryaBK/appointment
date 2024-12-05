@@ -6,10 +6,15 @@ import { t } from 'i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../../context/useUser/useUser';
 import { postSignOut } from '../../apiMethods/apiCall/post';
+import ThemeToggleButton from '../ThemeToggleButton/ThemeToggleButton';
+import useTheme from '../../context/useTheme/useTheme';
+import {ProfileImage, UserInfo, Wrapper} from "./styled";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 export default function ProfileContent() {
   const { user, setMethodLogType, methodLogType,setUser } = useUser();
   const [lod ,setLod] = useState(false)
+  const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
   console.log(user)
 
   const handleSubmit = async ()=> {
@@ -25,145 +30,137 @@ export default function ProfileContent() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <Text style={styles.header}>My Profile</Text>
-
-      {/* Profile Card */}
-      <View style={styles.card}>
-        {/* Profile Picture and Name */}
-        <View style={styles.topSection}>
-          <Image
-            source={{
-              uri: 'https://via.placeholder.com/100', // Replace with actual image URL
-            }}
-            style={styles.profileImage}
-          />
-          <View>
-            <Text style={styles.name}>Alex Rice</Text>
-            <View style={styles.idContainer}>
-              <Text style={styles.idText}>0123456789</Text>
-              <Text style={styles.idLabel}>ID Number</Text>
-            </View>
+    <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
+    <View style={[{flexDirection:"row",justifyContent:"space-between"}]}>
+    <Text style={[styles.title,{color: theme.light }]}>My Profile</Text>
+    <FontAwesome5 name="edit" size={24} color={theme.font_dark} />
+    </View>
+    <View style={styles.topSection}>
+        <View style={styles.photo}>
+          {user.photo ? (
+            <ProfileImage source={{ uri: user.photo.url }} style={styles.photoImage} />
+          ) : (
+            <ProfileImage style={[styles.photoImage,{objectFit:"fill"}]} source={require('../../assets/empty_image.png')} />
+          )}
+        </View>
+        <View style={styles.userInfo}>
+          <Text style={[styles.name,{color:theme.font_dark}]}>{`${user.first_name} ${user.last_name}`}</Text>
+          <View style={{top:0,marginTop:"auto",backgroundColor: '#F2EEFB',padding:10,borderRadius:10}}>
+          <Text style={{color:theme.dark_color,fontWeight:"bold"}}>{t('mobile')}</Text>
+          <Text style={{color:theme.dark_color}}>{user?.mobile ? user.mobile : ""}</Text>
           </View>
         </View>
+    </View>
 
-        {/* User Details */}
-        <View style={styles.infoSection}>
-          <View style={styles.row}>
-            <Text style={styles.label}>Birthday</Text>
-            <Text style={styles.value}>20 Sep 2000</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>City</Text>
-            <Text style={styles.value}>Dubai, UAE</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Gender</Text>
-            <Text style={styles.value}>Male</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Address</Text>
-            <Text style={styles.value}>Street 13</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Email</Text>
-            <Text style={styles.value}>alexrice2000@gmail.com</Text>
-          </View>
+    <View style={[styles.profileCard,{backgroundColor:theme.bg_light}]}>
+      <View style={styles.detailsSection}>
+        <View style={styles.detailRow}>
+          <Text style={styles.label}>Birthday</Text>
+          <UserInfo style={styles.value}>
+            {user.birthdate ? user.birthdate : "N/A"}
+          </UserInfo>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.label}>Gender</Text>
+          <UserInfo style={styles.value}>
+            {user.gender ? user.gender : "N/A"}
+          </UserInfo>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.label}>Email</Text>
+          <UserInfo style={styles.value}>
+            {user.email ? user.email : "N/A"}
+          </UserInfo>
         </View>
       </View>
-      <GlobalButton 
-        onPress={handleSubmit} 
-        loading={lod}
-        title={t("Sign out")} />
-
     </View>
+    <GlobalButton 
+      onPress={handleSubmit} 
+      loading={lod}
+      title={t("Sign out")} />
+    <ThemeToggleButton onToggle={toggleTheme} /> 
+  </Wrapper>
+        
+
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F6F6F6',
-    padding: 16,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
   },
-  header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#7B61FF',
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+  profileCard: {
+    borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowRadius: 6,
+    elevation: 3,
+    marginTop:20
   },
   topSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
+    flexDirection:"row",
+    gap:10,
   },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 16,
+  userInfo: {
+    padding:20,
+    paddingBottom:10
+  },
+  photo: {
+    width: 180,
+    height: 150,
+    borderRadius: 12,
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  photoImage: {
+    width: "100%",
+    height: "100%",
+  },
+  placeholder: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  placeholderText: {
+    color: "#9E9E9E",
   },
   name: {
     fontSize: 18,
-    fontWeight: 'bold',
-  },
-  idContainer: {
-    marginTop: 8,
+    fontWeight: "bold",
+    color: "#4A4A4A",
   },
   idText: {
     fontSize: 14,
-    color: '#7B61FF',
+    color: "#9E9E9E",
   },
-  idLabel: {
-    fontSize: 12,
-    color: '#999',
+  detailsSection: {
+    marginBottom: 16,
   },
-  infoSection: {
-    marginTop: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+  detailRow: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
   label: {
     fontSize: 14,
-    color: '#666',
+    color: "#9E9E9E",
   },
   value: {
-    fontSize: 14,
-    fontWeight: 'bold',
+
   },
-  navigation: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+  editButton: {
+    backgroundColor: "#6200EE",
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: "center",
   },
-  navItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  editButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
-  navIcon: {
-    fontSize: 24,
-  },
-});
+})
