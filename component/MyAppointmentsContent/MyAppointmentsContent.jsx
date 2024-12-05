@@ -9,33 +9,17 @@ import {
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Modalize } from 'react-native-modalize';
+import { Delete_appointment } from '../../apiMethods/apiCall/del';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLanguage } from '../../context/useLang/useLang';
 
-const MyAppointmentsContent = () => {
+const MyAppointmentsContent = ({data}) => {
   const modalizeRef = useRef(null);
   const [selectedItem, setSelectedItem] = React.useState(null);
+  const { lang } = useLanguage();
+  const queryClient = useQueryClient()
+  console.log(selectedItem)
 
-  const data = [
-    {
-      id: '1',
-      name: 'Name Surname',
-      email: 'namesurname@gmail.com',
-      branch: 'Branch location name',
-      time: '10:00am - 11:30am',
-      type: 'Consultations',
-      image: 'https://via.placeholder.com/50',
-    },
-    {
-      id: '2',
-      name: 'Name Surname',
-      email: 'namesurname@gmail.com',
-      branch: 'Branch location name',
-      time: '12:00am - 01:30pm',
-      type: 'Consultations',
-      image: 'https://via.placeholder.com/50',
-    },
-  ];
-
-  // فتح القائمة السفلى عند الضغط على الزر
   const openBottomSheet = (item) => {
     setSelectedItem(item);
     modalizeRef.current?.open();
@@ -43,25 +27,29 @@ const MyAppointmentsContent = () => {
 
   // وظائف الخيارات
   const handleEdit = () => {
-    console.log('Edit:', selectedItem);
+    // console.log('Edit:', selectedItem);
     modalizeRef.current?.close();
   };
 
-  const handleDelete = () => {
-    console.log('Delete:', selectedItem);
-    modalizeRef.current?.close();
+  const handleDelete = async () => {
+    const res =  await Delete_appointment(selectedItem.id)
+    if(res && res.data){
+      queryClient.invalidateQueries({ queryKey: ['customer-appointment', lang] });
+      modalizeRef.current?.close();
+    }
   };
 
   // تصميم بطاقة المواعيد
   const renderCard = ({ item }) => (
     <View style={styles.card}>
       <View style={styles.row}>
-        <Image source={{ uri: item.image }} style={styles.profileImage} />
+        <Image source={{ uri: item?.employee?.photo?.file_url }} style={styles.profileImage} />
         <View style={styles.details}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.email}>{item.email}</Text>
+          <Text style={styles.name}>{item?.employee?.branch?.name}</Text>
+          <Text style={styles.email}>{item?.employee?.email}</Text>
           <Text style={styles.branch}>{item.branch}</Text>
           <Text style={styles.time}>{item.time}</Text>
+          <Text style={styles.time}>{item.date}</Text>
           <Text style={styles.type}>{item.type}</Text>
         </View>
         <TouchableOpacity onPress={() => openBottomSheet(item)}>

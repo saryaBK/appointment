@@ -46,10 +46,10 @@ const SignUpContent = () => {
       setUser(send?.data?.data);
       const userData = send?.data?.data;
       if (userData) {
-          await AsyncStorage.setItem('user', JSON.stringify(userData));
+        await AsyncStorage.setItem('user', JSON.stringify(userData));
       } 
       setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: ['account'] });
+        queryClient.invalidateQueries({ queryKey: ['account'] });
       }, 100);
     }
     setLod(false); 

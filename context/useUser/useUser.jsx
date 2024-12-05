@@ -12,20 +12,18 @@ const UserContext = ({children}) => {
     const [lod , setLod] = useState(true)
     const [methodLogType , setMethodLogType] = useState('login')
 
-
-    // const {data:Account,isLoading} = useQuery({
-    //   queryKey: ['account'],
-    //   queryFn: async () => {
-    //       const res = await getAccount()
-    //       if(res && res?.data){
-    //         setUser(res.data)
-    //         await AsyncStorage.setItem('user' , JSON.stringify(res.data)) 
-    //       }
-    //       return res?.data || null
-    //   },
-    //   staleTime: Infinity,
-    //   enabled :user ? true : false
-    // })
+    const {data:Account,isLoading} = useQuery({
+      queryKey: ['account'],
+      queryFn: async () => {
+          const res = await getAccount()
+          if(res && res?.data){
+            setUser(res.data)
+            await AsyncStorage.setItem('user' , JSON.stringify(res.data)) 
+          }
+          return res?.data || null
+      },
+      staleTime: Infinity,
+    })
 
     useEffect(() => {
         const initializeUser = async () => {

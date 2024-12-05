@@ -8,14 +8,15 @@ import { useUser } from '../../context/useUser/useUser';
 import { postSignOut } from '../../apiMethods/apiCall/post';
 import ThemeToggleButton from '../ThemeToggleButton/ThemeToggleButton';
 import useTheme from '../../context/useTheme/useTheme';
-import {ProfileImage, UserInfo, Wrapper} from "./styled";
+import {ImageWrapper, PhoneAndNameWrapper, PhoneWrapper, ProfileImage, TopSectionWrapper, UserInfo, Wrapper} from "./styled";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProfileContent() {
   const { user, setMethodLogType, methodLogType,setUser } = useUser();
   const [lod ,setLod] = useState(false)
   const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
-  console.log(user)
+  const queryClient = useQueryClient();
 
   const handleSubmit = async ()=> {
     setLod(true)
@@ -24,10 +25,14 @@ export default function ProfileContent() {
       setUser(null)
       await AsyncStorage.removeItem('user');
       await AsyncStorage.removeItem('s_id');
+      await AsyncStorage.removeItem('jwt');
+      setTimeout(() => {
+        queryClient.invalidateQueries({queryKey:['account']})
+      }, 100);
     }
     setLod(false)
-    
   }
+  console.log(user)
 
   return (
     <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
@@ -35,22 +40,24 @@ export default function ProfileContent() {
     <Text style={[styles.title,{color: theme.light }]}>My Profile</Text>
     <FontAwesome5 name="edit" size={24} color={theme.font_dark} />
     </View>
-    <View style={styles.topSection}>
-        <View style={styles.photo}>
+    <TopSectionWrapper>
+        <ImageWrapper>
           {user.photo ? (
-            <ProfileImage source={{ uri: user.photo.url }} style={styles.photoImage} />
+            <ProfileImage style={[styles.ImageBorder,{objectFit:"fill"}]} source={{ uri: user.photo.url}} />
           ) : (
-            <ProfileImage style={[styles.photoImage,{objectFit:"fill"}]} source={require('../../assets/empty_image.png')} />
+            <ProfileImage style={[styles.ImageBorder,{objectFit:"cover"}]} source={require('../../assets/user_avatar.png')} />
           )}
-        </View>
-        <View style={styles.userInfo}>
-          <Text style={[styles.name,{color:theme.font_dark}]}>{`${user.first_name} ${user.last_name}`}</Text>
-          <View style={{top:0,marginTop:"auto",backgroundColor: '#F2EEFB',padding:10,borderRadius:10}}>
-          <Text style={{color:theme.dark_color,fontWeight:"bold"}}>{t('mobile')}</Text>
-          <Text style={{color:theme.dark_color}}>{user?.mobile ? user.mobile : ""}</Text>
-          </View>
-        </View>
-    </View>
+        </ImageWrapper>
+        <PhoneAndNameWrapper>
+            <Text style={[styles.name,{color:theme.font_dark}]}>{`${user.first_name} ${user.last_name}`}</Text>
+
+          <PhoneWrapper>
+            <Text style={{color:theme.dark_color,fontWeight:"bold",flexWrap:"wrap"}}>{t('mobile')}</Text>
+            <Text style={{color:theme.dark_color}}>{user?.mobile ? user.mobile : ""}</Text>
+          </PhoneWrapper>
+
+        </PhoneAndNameWrapper>
+    </TopSectionWrapper>
 
     <View style={[styles.profileCard,{backgroundColor:theme.bg_light}]}>
       <View style={styles.detailsSection}>
@@ -74,14 +81,14 @@ export default function ProfileContent() {
         </View>
       </View>
     </View>
-    <GlobalButton 
-      onPress={handleSubmit} 
-      loading={lod}
-      title={t("Sign out")} />
-    <ThemeToggleButton onToggle={toggleTheme} /> 
-  </Wrapper>
-        
+    <ThemeToggleButton onToggle={toggleTheme} />
 
+    <GlobalButton 
+    style={styles.sendWrapperBtn}
+    onPress={handleSubmit} 
+    loading={lod}
+    title={t("Sign out")} />
+  </Wrapper>
   );
 }
 
@@ -90,6 +97,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 16,
+  },
+  ImageBorder: {
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   profileCard: {
     borderRadius: 12,
@@ -100,26 +114,9 @@ const styles = StyleSheet.create({
     elevation: 3,
     marginTop:20
   },
-  topSection: {
-    flexDirection:"row",
-    gap:10,
-  },
   userInfo: {
     padding:20,
     paddingBottom:10
-  },
-  photo: {
-    width: 180,
-    height: 150,
-    borderRadius: 12,
-    backgroundColor: "#E0E0E0",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  photoImage: {
-    width: "100%",
-    height: "100%",
   },
   placeholder: {
     justifyContent: "center",
@@ -149,8 +146,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#9E9E9E",
   },
-  value: {
-
+  sendWrapperBtn:{
+    top:0,
+    marginTop:'auto',
   },
   editButton: {
     backgroundColor: "#6200EE",

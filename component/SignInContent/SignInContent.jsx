@@ -15,11 +15,10 @@ import { useLanguage } from "../../context/useLang/useLang";
 
 const SignInContent = () => {
   const [lod, setLod] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState("en"); // الحالة لتتبع اللغة المختارة
-  const { user, setMethodLogType, methodLogType, setUser } = useUser();
+  const { setMethodLogType} = useUser();
   const { lang, switchLang } = useLanguage();
   const queryClient = useQueryClient();
-  const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
+  const { theme } = useTheme();
 
   const SignInSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -39,13 +38,17 @@ const SignInContent = () => {
     const send = await postLogIn(sendData);
     const S_Id = send?.res?.headers?.get("s_id");
     if (S_Id) {
-      await AsyncStorage.setItem("s_id", JSON.stringify(S_Id));
+      await AsyncStorage.setItem("s_id", S_Id);
+    }
+    if (send.data.meta.token) {
+      await AsyncStorage.setItem("jwt", send.data.meta.token);
     }
     if (send && send?.data?.data) {
-      setUser(send?.data?.data);
       const userData = send?.data?.data;
       if (userData) {
-        await AsyncStorage.setItem("user", JSON.stringify(userData));
+        setTimeout(() => {
+          queryClient.invalidateQueries({queryKey:['account']})
+      }, 100);
       }
     }
     setLod(false);
