@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { t } from "i18next";
-import { Alert,View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Button, ScrollView } from "react-native";
+import { Alert,View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Button, ScrollView,Dimensions } from "react-native";
 import { BackIcon, Card, Header, HeaderText, ProfileImage, Wrapper, WrapperTime } from "./styled";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { getAvailableAppointment } from "../../apiMethods/apiCall/get";
@@ -13,11 +14,16 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useLanguage } from "../../context/useLang/useLang";
 import useTheme from "../../context/useTheme/useTheme";
 import AppointmentTypeCheckBox from "../AppointmentTypeCheckBox/AppointmentTypeCheckBox";
+import { postCustomerAppointment } from "../../apiMethods/apiCall/post";
+import UserLoginMethods from "../UserLoginMethods/UserLoginMethods";
 
-const App = ({data,serviceTypeData}) => {
+const { height } = Dimensions.get('window');
+
+const EmployeeDetailsContentTwo = ({data,serviceTypeData,user}) => {
     const { lang } = useLanguage();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [selectedDate, setSelectedDate] = useState('');
+    const [lod, setLod] = useState(false);
     const {theme,toggleTheme} = useTheme();
     const Navigation = useNavigation()
     const [specifiedBookingDate, setspecifiedBookingDate] = useState('');
@@ -26,8 +32,24 @@ const App = ({data,serviceTypeData}) => {
     var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     var newDate = new Date(selectedDate).toLocaleDateString('en-CA', options).replace(/\//g, '-');
     const id = data.id
-    console.log(selectedServiceId)
+    const [isOpen, setIsOpen] = useState(false);
+    const drawerHeight = useSharedValue(-height); // يبدأ خارج الشاشة
+    
+
+    const toggleDrawer = () => {
+      // التبديل بين الفتح والإغلاق
+      drawerHeight.value = isOpen ? -height : 0;
+      setIsOpen(!isOpen);
+    };
+
+    const animatedStyle = useAnimatedStyle(() => {
+      return {
+        transform: [{ translateY: withSpring(drawerHeight.value, { damping: 15 }) }],
+      };
+    });
+
     const showDatePicker = () => {
+      setSelectedTimeId(null)
       setDatePickerVisibility(true);
     };
   
@@ -54,8 +76,23 @@ const App = ({data,serviceTypeData}) => {
     
   
     
-    const handleAppointmentData = ()=> {
-  
+    const handleAppointmentData = async ()=> {
+      setLod(true)
+      if(!user){
+        toggleDrawer()
+      }else{
+        const sendData = {
+          available_appointment_id: selectedTimeId,
+          services: selectedServiceId,
+          urgent: "1"
+        };
+        const res = await postCustomerAppointment(sendData)
+        if(res && res.res && res.res.ok){
+          Navigation.navigate('Home')
+        }
+      }
+      setLod(false)
+      
     }
   
     const handleGoBack = () => {
@@ -63,6 +100,7 @@ const App = ({data,serviceTypeData}) => {
     };
 
   return (
+    <>
     <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
         <Header>
             <BackIcon>
@@ -113,7 +151,6 @@ const App = ({data,serviceTypeData}) => {
               </>
             );
           } else if (item.id === "list1") {
-            // القائمة الأولى
             return (
               <>
               {
@@ -124,6 +161,7 @@ const App = ({data,serviceTypeData}) => {
                     dateData={dateData} 
                     theme={theme} 
                     setspecifiedBookingDate={setspecifiedBookingDate} 
+                    specifiedBookingDate={specifiedBookingDate}
                     setSelectedTimeId={setSelectedTimeId}/>
                     </WrapperTime>
                 :
@@ -143,7 +181,12 @@ const App = ({data,serviceTypeData}) => {
           }else if (item.id === "footer") {
             return (
             <View style={[styles.sendWrapperBtn,{paddingTop:"10"}]}>
-            <GlobalButton onPress={handleAppointmentData} width='100%' title={t("Reserve Appointment")} />
+            <GlobalButton
+             disabled={(!selectedTimeId || selectedServiceId?.length == 0) ? true : false}
+             onPress={handleAppointmentData}
+             loading={lod}
+             width='100%' 
+             title={t("Reserve Appointment")} />
             </View>
             );
           }
@@ -158,6 +201,12 @@ const App = ({data,serviceTypeData}) => {
         // }
       />
     </Wrapper>
+    {!user ?
+    <Animated.View style={[styles.drawer, animatedStyle]}>
+        <UserLoginMethods/>
+    </Animated.View>
+    : null}
+    </>
   );
 };
 
@@ -215,7 +264,34 @@ const styles = StyleSheet.create({
     sendWrapperBtn:{
       top:0,
       marginTop:'auto',
-    }
+    },
+    button: {
+      backgroundColor: '#6200ee',
+      padding: 15,
+      borderRadius: 8,
+    },
+    buttonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 16,
+    },
+    drawer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: height / 1,
+      backgroundColor: '#6200ee',
+      justifyContent: 'center',
+      // alignItems: 'center',
+      // borderBottomLeftRadius: 20,
+      // borderBottomRightRadius: 20,
+    },
+    drawerText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
   });
 
-export default App;
+export default EmployeeDetailsContentTwo;

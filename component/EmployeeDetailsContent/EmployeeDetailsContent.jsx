@@ -27,7 +27,7 @@ export default function EmployeeDetailsContent({data,serviceTypeData}) {
   var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
   var newDate = new Date(selectedDate).toLocaleDateString('en-CA', options).replace(/\//g, '-');
   const id = data.id
-  console.log(selectedServiceId)
+
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };

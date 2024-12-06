@@ -6,10 +6,12 @@ import { useQuery } from '@tanstack/react-query';
 import { getBranchById, getEmployeeById, service_type } from '../apiMethods/apiCall/get';
 import GlobalLoading from '../component/GlobalLoading/GlobalLoading';
 import EmployeeDetailsContentTwo from '../component/EmployeeDetailsContentTwo/EmployeeDetailsContentTwo';
+import { useUser } from '../context/useUser/useUser';
 
 const EmployeeDetails = () => {
   const { lang } = useLanguage();
   const router = useRoute()
+  const {user} = useUser()
   const id = router.params.employee_id
 
   const { data, isLoading } = useQuery({
@@ -38,7 +40,7 @@ const EmployeeDetails = () => {
     <GlobalLoading/>
   ) : (
     // <EmployeeDetailsContent data={data} serviceTypeData={serviceTypeData}/>
-    <EmployeeDetailsContentTwo data={data} serviceTypeData={serviceTypeData}/>
+    <EmployeeDetailsContentTwo data={data} serviceTypeData={serviceTypeData} user={user}/>
   );
 };
 

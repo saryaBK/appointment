@@ -11,3 +11,7 @@ export const postSignOut = async () => {
 export const postSignUp = async (data) => {
     return await post({ path: `sign_up`, sendData: data });
 };
+
+export const postCustomerAppointment = async (data) => {
+    return await post({ path: `customer_appointment`, sendData: data });
+};

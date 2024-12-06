@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 
-const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate,setSelectedTimeId}) => {
+const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate,setSelectedTimeId,specifiedBookingDate}) => {
   const [selectedTime, setSelectedTime] = useState(null);
-
+  
   const renderItem = ({ item }) => {
     const isSelected = selectedTime == item.time;
   

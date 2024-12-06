@@ -18,7 +18,6 @@ const MyAppointmentsContent = ({data}) => {
   const [selectedItem, setSelectedItem] = React.useState(null);
   const { lang } = useLanguage();
   const queryClient = useQueryClient()
-  console.log(selectedItem)
 
   const openBottomSheet = (item) => {
     setSelectedItem(item);
@@ -66,6 +65,7 @@ const MyAppointmentsContent = ({data}) => {
         data={data}
         renderItem={renderCard}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false} // إخفاء شريط التمرير العمودي
         contentContainerStyle={styles.list}
       />
       {/* القائمة السفلى */}
