@@ -1,6 +1,6 @@
 import { t } from "i18next";
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Button } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Button, ScrollView } from "react-native";
 import { BackIcon, Card, Header, HeaderText, ProfileImage, Wrapper, WrapperTime } from "./styled";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -12,19 +12,22 @@ import GlobalButton from "../GlobalButton/GlobalButton";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useLanguage } from "../../context/useLang/useLang";
 import useTheme from "../../context/useTheme/useTheme";
-import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton";
+import AppointmentTypeCheckBox from "../AppointmentTypeCheckBox/AppointmentTypeCheckBox";
 
-export default function EmployeeDetailsContent({data}) {
+
+export default function EmployeeDetailsContent({data,serviceTypeData}) {
   const { lang } = useLanguage();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const {theme,toggleTheme} = useTheme();
+  const Navigation = useNavigation()
   const [specifiedBookingDate, setspecifiedBookingDate] = useState('');
+  const [selectedTimeId, setSelectedTimeId] = useState(null);
+  const [selectedServiceId, setSelectedserviceId] = useState([]);
   var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
   var newDate = new Date(selectedDate).toLocaleDateString('en-CA', options).replace(/\//g, '-');
-
   const id = data.id
-
+  console.log(selectedServiceId)
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -49,15 +52,19 @@ export default function EmployeeDetailsContent({data}) {
     staleTime: Infinity,
     enabled:id && newDate != 'Invalid Date' ? true : false
   });
+  
 
-  const Navigation = useNavigation()
+  
+  const handleAppointmentData = ()=> {
+
+  }
 
   const handleGoBack = () => {
     Navigation.goBack(); 
   };
 
   return (
-    <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
+      <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
       <Header>
         <BackIcon>
           <AntDesign onPress={handleGoBack} name={lang == 'ar'?"arrowright":"arrowleft"} size={24} color={theme.light} />
@@ -104,13 +111,22 @@ export default function EmployeeDetailsContent({data}) {
         dateData && dateData.length > 0 ?
         <WrapperTime>
         <Text style={[styles.sectionTitle,{color: theme.font_dark }]}>{t('Choose available time')}</Text>
-        <AppointmentTimeBar dateData={dateData} theme={theme} setspecifiedBookingDate={setspecifiedBookingDate}/>
+        <AppointmentTimeBar 
+        dateData={dateData} 
+        theme={theme} 
+        setspecifiedBookingDate={setspecifiedBookingDate} 
+        setSelectedTimeId={setSelectedTimeId}/>
         </WrapperTime>
       :
       <Text style={[styles.sectionTitle, { color: theme.font_dark }]}>{t('There is no time available on this date')}</Text>
       }
-      <View style={styles.sendWrapperBtn}>
-      <GlobalButton width='100%' title={t("Reserve Appointment")} />
+      <AppointmentTypeCheckBox 
+      serviceTypeData={serviceTypeData} 
+      setSelectedserviceId={setSelectedserviceId} 
+      selectedServiceId={selectedServiceId}/>
+
+      <View style={[styles.sendWrapperBtn,{paddingTop:"10"}]}>
+      <GlobalButton onPress={handleAppointmentData} width='100%' title={t("Reserve Appointment")} />
       </View>
     </Wrapper>
   );
@@ -170,6 +186,8 @@ const styles = StyleSheet.create({
   sendWrapperBtn:{
     top:0,
     marginTop:'auto',
+    // paddingTop:20
+    
   }
 });
 

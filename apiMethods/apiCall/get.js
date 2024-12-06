@@ -23,3 +23,7 @@ export const getAccount= async () => {
 export const getCustomerAppointment= async ({lang}) => {
   return await get({ path:`customer_appointment?language=${lang}`});
 };
+
+export const service_type = async ({lang}) => {
+  return await get({ path:`service_type?language=${lang}`});
+}

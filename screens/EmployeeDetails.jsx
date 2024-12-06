@@ -3,8 +3,9 @@ import EmployeeDetailsContent from '../component/EmployeeDetailsContent/Employee
 import { useRoute  } from "@react-navigation/native";
 import { useLanguage } from '../context/useLang/useLang';
 import { useQuery } from '@tanstack/react-query';
-import { getBranchById, getEmployeeById } from '../apiMethods/apiCall/get';
+import { getBranchById, getEmployeeById, service_type } from '../apiMethods/apiCall/get';
 import GlobalLoading from '../component/GlobalLoading/GlobalLoading';
+import EmployeeDetailsContentTwo from '../component/EmployeeDetailsContentTwo/EmployeeDetailsContentTwo';
 
 const EmployeeDetails = () => {
   const { lang } = useLanguage();
@@ -21,15 +22,30 @@ const EmployeeDetails = () => {
     },
     staleTime: Infinity,
   });
+  
+  const { data:serviceTypeData, isLoading:serviceTypeLod } = useQuery({
+    queryKey: ['service-type-id', lang],
+    queryFn: async () => {
+      const res = await service_type({lang});
+      if (res && res.data) {
+        return res.data;
+      }
+    },
+    staleTime: Infinity,
+  });
 
-  return isLoading || !data ? (
+  return isLoading || !data || serviceTypeLod || !serviceTypeData ? (
     <GlobalLoading/>
   ) : (
-    <EmployeeDetailsContent data={data}/>
+    // <EmployeeDetailsContent data={data} serviceTypeData={serviceTypeData}/>
+    <EmployeeDetailsContentTwo data={data} serviceTypeData={serviceTypeData}/>
   );
 };
 
 
 export default EmployeeDetails;
+
+
+
 
 

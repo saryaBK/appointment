@@ -32,7 +32,6 @@ export default function ProfileContent() {
     }
     setLod(false)
   }
-  console.log(user)
 
   return (
     <Wrapper style={{paddingTop: theme.mediumSize + 40}}>

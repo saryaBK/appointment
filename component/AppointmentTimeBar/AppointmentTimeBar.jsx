@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 
-const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate}) => {
+const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate,setSelectedTimeId}) => {
   const [selectedTime, setSelectedTime] = useState(null);
 
   const renderItem = ({ item }) => {
     const isSelected = selectedTime == item.time;
+  
     return (
       <TouchableOpacity
         style={[
@@ -13,8 +14,9 @@ const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate}) => {
           isSelected && { backgroundColor: theme.dark_color },
         ]}
         onPress={() => {
-            setSelectedTime(item.time)
-            setspecifiedBookingDate(item.time)
+          setSelectedTime(item.time);
+          setspecifiedBookingDate(item.time);
+          setSelectedTimeId(item.id);
         }}
       >
         <Text
