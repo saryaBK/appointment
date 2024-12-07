@@ -56,14 +56,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     backgroundColor: '#fff',
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'center',
     width: 70,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   itemText: {
-    fontWeight:'bold'
+    fontWeight:'bold',
+    fontSize:15
   },
   selectedText: {
     color: '#fff',

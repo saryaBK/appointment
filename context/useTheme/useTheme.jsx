@@ -56,11 +56,11 @@ export const ThemeProvider = ({ children }) => {
       bg_light:prevTheme.mode === "light" ? "#D9D9D9" : "#FFFFFF",
       font_dark:prevTheme.mode === "light" ? "#FFFFFF" : "#1B1564",
       font_light:prevTheme.mode === "light" ? "#1B1564" :"#FFFFFF",
+      font_gray:prevTheme.mode === "light" ? "#62616E" :"#62616E",
       border_dark:prevTheme.mode === "light" ? "#7551D6" : "#1B1564",
       border_light:prevTheme.mode === "light" ? "#1B1564" :"#7551D6",
     }));
   };
-
 
   return (
     <ThemeConfig.Provider value={{ theme, toggleTheme,setIsEnabled,isEnabled }}>

@@ -27,13 +27,9 @@ const SignInContent = () => {
 
   const handleSignIn = async (values) => {
     const sendData = {
-      username: 'blaloalbkre@gmail.com',
-      password: '123robin123',
+      username: values.email,
+      password: values.password,
     };
-    // const sendData = {
-    //   username: values.email,
-    //   password: values.password,
-    // };
     setLod(true);
     const send = await postLogIn(sendData);
     const S_Id = send?.res?.headers?.get("s_id");
@@ -62,7 +58,7 @@ const SignInContent = () => {
 
       <Formik
         initialValues={{ email: "", password: "" }}
-        // validationSchema={SignInSchema}
+        validationSchema={SignInSchema}
         onSubmit={handleSignIn}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (

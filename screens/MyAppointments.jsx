@@ -33,11 +33,11 @@ const MyAppointments = () => {
   });
   
   return !user ? (
-    <View style={{paddingTop: theme.mediumSize + 40}}>
-      <Text>
-      Please log in.
+    <View style={[styles.wrapper,{paddingTop: theme.mediumSize + 40}]}>
+      <Text style={{width:"100%",textAlign:"center"}}>
+      Log in to start booking your own appointment.
       </Text>
-      <GlobalButton width='100%' title={t("Reserve Appointment")} onPress={() => { Navigation.navigate('ProfileStack') }}/>
+      <GlobalButton width='100%' title={t("Login")} onPress={() => { Navigation.navigate('ProfileStack') }}/>
     </View>
   ) : isLoading || !data  ? (
     <GlobalLoading/>
@@ -48,6 +48,13 @@ const MyAppointments = () => {
   );
 };
 const styles = StyleSheet.create({
+  wrapper:{
+   padding:20,
+   justifyContent:"center",
+   alignItems:"center",
+   flex:1,
+   gap:10,
+  },
   container: {
     flex: 1,
   },
@@ -55,3 +62,7 @@ const styles = StyleSheet.create({
 
 
 export default MyAppointments;
+
+
+
+

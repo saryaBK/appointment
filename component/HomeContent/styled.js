@@ -24,6 +24,7 @@ export const BranchNote = styled(Text)`
 
 export const FindText = styled(Text)`
   font-size: ${(props) => `${props.theme.large}px`};
+  width:250px;
   font-weight:bold;
   color:${(props) => props.theme.light};
   padding-bottom:10px;

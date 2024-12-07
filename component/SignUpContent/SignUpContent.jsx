@@ -27,11 +27,8 @@ const SignUpContent = () => {
   const [lod ,setLod] = useState(false)
   const queryClient = useQueryClient()
   const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
+  
   const handleSignUp = async (values) => {
-    // const sendData = {
-    //     email: 'blaloalbkre10@gmail.com',
-    //     password: '123robin123',
-    // };
     const sendData = {
       email: values.email,
       password: values.password,
@@ -61,7 +58,7 @@ const SignUpContent = () => {
      </View>
       <Formik
         initialValues={{ email: "", password: "", confirmPassword: "" }}
-        // validationSchema={SignUpSchema}
+        validationSchema={SignUpSchema}
         onSubmit={handleSignUp}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (

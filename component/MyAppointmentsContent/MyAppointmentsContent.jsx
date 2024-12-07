@@ -12,72 +12,85 @@ import { Modalize } from 'react-native-modalize';
 import { Delete_appointment } from '../../apiMethods/apiCall/del';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '../../context/useLang/useLang';
+import useTheme from '../../context/useTheme/useTheme';
+import * as Animatable from 'react-native-animatable';
+import { formatDate } from '../FormatDateFunc/FormatDateFunc';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
-const MyAppointmentsContent = ({data}) => {
+const MyAppointmentsContent = ({ data }) => {
   const modalizeRef = useRef(null);
+  const { theme } = useTheme();
   const [selectedItem, setSelectedItem] = React.useState(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const { lang } = useLanguage();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const openBottomSheet = (item) => {
     setSelectedItem(item);
     modalizeRef.current?.open();
   };
 
-  // وظائف الخيارات
-  const handleEdit = () => {
-    // console.log('Edit:', selectedItem);
-    modalizeRef.current?.close();
-  };
-
   const handleDelete = async () => {
-    const res =  await Delete_appointment(selectedItem.id)
-    if(res && res.data){
-      queryClient.invalidateQueries({ queryKey: ['customer-appointment', lang] });
-      modalizeRef.current?.close();
+    setIsDeleting(true);
+    try {
+      const res = await Delete_appointment(selectedItem.id);
+      if (res && res.data) {
+        queryClient.invalidateQueries({ queryKey: ['customer-appointment', lang] });
+        modalizeRef.current?.close();
+      }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  // تصميم بطاقة المواعيد
-  const renderCard = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.row}>
-        <Image source={{ uri: item?.employee?.photo?.file_url }} style={styles.profileImage} />
-        <View style={styles.details}>
-          <Text style={styles.name}>{item?.employee?.branch?.name}</Text>
-          <Text style={styles.email}>{item?.employee?.email}</Text>
-          <Text style={styles.branch}>{item.branch}</Text>
-          <Text style={styles.time}>{item.time}</Text>
-          <Text style={styles.time}>{item.date}</Text>
-          <Text style={styles.type}>{item.type}</Text>
+  const renderCard = ({ item }) =>{ 
+    return(
+      <View style={{gap:20}}>
+        <Text style={{color:theme.font_dark,fontWeight:"bold",fontSize:16}}>{formatDate(item?.date)}</Text>
+        <View style={[styles.card,{backgroundColor:theme.bg_light}]}>
+          <View style={{flexDirection:"row",justifyContent:"space-between"}}>
+          <Image source={{ uri: item?.employee?.photo?.file_url }} style={styles.profileImage} />
+          <View style={{flexDirection:"column"}}>
+          <Text style={{width:200,color:theme.light,fontWeight:"bold",fontSize:16,color:theme.light_color}}>{item?.employee?.name}</Text>
+          <Text style={{width:200,color:theme.font_gray}}>{item?.employee?.email}</Text>
+          </View>
+          <TouchableOpacity style={[styles.icon]} onPress={() => openBottomSheet(item)}>
+            <FontAwesome6 onPress={() => openBottomSheet(item)} name="ellipsis-vertical" size={24} color="gray" />
+          </TouchableOpacity>
+          </View>
+          <Text style={{fontSize:15,fontWeight:"bold"}}>{item?.employee?.branch?.name}</Text>
+          <Text style={{fontSize:15,fontWeight:"bold"}}>{item.time}</Text>
         </View>
-        <TouchableOpacity onPress={() => openBottomSheet(item)}>
-          <AntDesign name="ellipsis1" size={20} color="gray" />
-        </TouchableOpacity>
       </View>
-    </View>
-  );
+  )};
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>My Appointments</Text>
+    <View style={[styles.container, { paddingTop: theme.mediumSize + 40,paddingHorizontal:25}]}>
+      <Text style={[styles.header,{color:theme.font_dark}]}>My Appointments</Text>
       <FlatList
         data={data}
         renderItem={renderCard}
         keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false} // إخفاء شريط التمرير العمودي
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
       />
-      {/* القائمة السفلى */}
       <Modalize ref={modalizeRef} adjustToContentHeight>
         <View style={styles.bottomSheet}>
-          <TouchableOpacity style={styles.actionButton} onPress={handleEdit}>
-            <AntDesign name="edit" size={20} color="black" />
-            <Text style={styles.actionText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
-            <AntDesign name="delete" size={20} color="red" />
-            <Text style={[styles.actionText, { color: 'red' }]}>Delete</Text>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleDelete}
+            disabled={isDeleting} 
+          >
+            <Animatable.View
+              animation={isDeleting ? 'rotate' : undefined}
+              duration={1000}
+              iterationCount="infinite"
+            >
+              <AntDesign name="delete" size={20} color={isDeleting ? 'orange' : 'red'} />
+            </Animatable.View>
+            <Text style={[styles.actionText, { color: isDeleting ? 'orange' : 'red' }]}>
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </Text>
           </TouchableOpacity>
         </View>
       </Modalize>
@@ -89,20 +102,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
   },
   header: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#2c2c5c',
   },
   list: {
     paddingBottom: 10,
   },
   card: {
-    backgroundColor: '#fff',
     padding: 15,
+    gap:10,
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',
@@ -117,9 +128,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 70,
+    height: 70,
+    borderRadius: 50,
     marginRight: 10,
   },
   details: {
@@ -147,7 +158,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   bottomSheet: {
-    padding: 20,
+    paddingHorizontal: 20,
   },
   actionButton: {
     flexDirection: 'row',
@@ -160,6 +171,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
   },
+  icon:{
+    alignItems:'flex-end',
+    width:25,
+  }
 });
 
 export default MyAppointmentsContent;

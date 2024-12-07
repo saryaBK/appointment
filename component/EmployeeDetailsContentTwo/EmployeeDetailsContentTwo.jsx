@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { t } from "i18next";
-import { Alert,View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Button, ScrollView,Dimensions } from "react-native";
+import { Alert,View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Button, ScrollView,Dimensions, StatusBar } from "react-native";
 import { BackIcon, Card, Header, HeaderText, ProfileImage, Wrapper, WrapperTime } from "./styled";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { Ionicons } from "@expo/vector-icons";
@@ -33,7 +33,7 @@ const EmployeeDetailsContentTwo = ({data,serviceTypeData,user}) => {
     var newDate = new Date(selectedDate).toLocaleDateString('en-CA', options).replace(/\//g, '-');
     const id = data.id
     const [isOpen, setIsOpen] = useState(false);
-    const drawerHeight = useSharedValue(-height); // يبدأ خارج الشاشة
+    const drawerHeight = useSharedValue(-height);
     const queryClient = useQueryClient();
 
     const toggleDrawer = () => {
@@ -210,7 +210,7 @@ const EmployeeDetailsContentTwo = ({data,serviceTypeData,user}) => {
     </Wrapper>
     {!user ?
     <Animated.View style={[styles.drawer, animatedStyle]}>
-         <TouchableOpacity style={styles.closeButton} onPress={toggleDrawer}>
+         <TouchableOpacity style={[styles.closeButton,{marginTop:StatusBar.currentHeight + 5}]} onPress={toggleDrawer}>
             <AntDesign name="close" size={24} color={theme.font_dark} />
         </TouchableOpacity>
         <UserLoginMethods/>
@@ -295,7 +295,6 @@ const styles = StyleSheet.create({
   },
   closeButton: {
       position: 'absolute',
-      marginTop:20,
       top: 20,
       right: 20,
       zIndex: 10,

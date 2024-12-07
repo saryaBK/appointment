@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import useTheme from "../../context/useTheme/useTheme";
 
 const AppointmentTypeCheckBox = ({ serviceTypeData, setSelectedserviceId, selectedServiceId }) => {
+  const {theme,toggleTheme} = useTheme();
   const toggleSelection = (id) => {
     setSelectedserviceId((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -23,12 +25,13 @@ const AppointmentTypeCheckBox = ({ serviceTypeData, setSelectedserviceId, select
               <View
                 style={[
                   styles.checkbox,
+                  {borderColor:theme.light},
                   selectedServiceId.includes(item.id) && styles.checkboxSelected,
                 ]}
               />
-              <Text style={styles.itemText}>{item.name}</Text>
+              <Text style={[styles.itemText,{color:theme.font_dark}]}>{item.name}</Text>
             </TouchableOpacity>
-            <Text style={styles.priceText}>{item.price} SAR</Text>
+            <Text style={[styles.priceText,{color:theme.font_gray}]}>{item.price} SAR</Text>
           </View>
         )}
         // contentContainerStyle={{ paddingBottom: 20 }} // إضافة هامش داخلي
@@ -63,20 +66,18 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: "#6200ee",
     borderRadius: 4,
     marginRight: 10,
   },
   checkboxSelected: {
-    backgroundColor: "#6200ee",
+    backgroundColor: "#7551D6",
   },
   itemText: {
     fontSize: 16,
-    color: "#333",
   },
   priceText: {
     fontSize: 16,
-    color: "#8a8a8a",
+    fontWeight:"500"
   },
 });
 
