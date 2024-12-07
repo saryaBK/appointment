@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { getAvailableAppointment } from "../../apiMethods/apiCall/get";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AppointmentTimeBar from "../AppointmentTimeBar/AppointmentTimeBar";
 import GlobalButton from "../GlobalButton/GlobalButton";
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -34,10 +34,9 @@ const EmployeeDetailsContentTwo = ({data,serviceTypeData,user}) => {
     const id = data.id
     const [isOpen, setIsOpen] = useState(false);
     const drawerHeight = useSharedValue(-height); // يبدأ خارج الشاشة
-    
+    const queryClient = useQueryClient();
 
     const toggleDrawer = () => {
-      // التبديل بين الفتح والإغلاق
       drawerHeight.value = isOpen ? -height : 0;
       setIsOpen(!isOpen);
     };
@@ -88,7 +87,15 @@ const EmployeeDetailsContentTwo = ({data,serviceTypeData,user}) => {
         };
         const res = await postCustomerAppointment(sendData)
         if(res && res.res && res.res.ok){
-          Navigation.navigate('Home')
+          queryClient.invalidateQueries({queryKey:['customer-appointment', lang]})
+          queryClient.invalidateQueries({queryKey:['available-appointment']})
+          queryClient.invalidateQueries({queryKey:['branch-name-by-id']})
+          setSelectedTimeId(null)
+          setSelectedserviceId([])
+          setSelectedDate('')
+          setTimeout(() => {
+              Navigation.navigate('MyAppointments')
+          }, 100)
         }
       }
       setLod(false)
@@ -203,6 +210,9 @@ const EmployeeDetailsContentTwo = ({data,serviceTypeData,user}) => {
     </Wrapper>
     {!user ?
     <Animated.View style={[styles.drawer, animatedStyle]}>
+         <TouchableOpacity style={styles.closeButton} onPress={toggleDrawer}>
+            <AntDesign name="close" size={24} color={theme.font_dark} />
+        </TouchableOpacity>
         <UserLoginMethods/>
     </Animated.View>
     : null}
@@ -281,12 +291,15 @@ const styles = StyleSheet.create({
       left: 0,
       right: 0,
       height: height / 1,
-      backgroundColor: '#6200ee',
       justifyContent: 'center',
-      // alignItems: 'center',
-      // borderBottomLeftRadius: 20,
-      // borderBottomRightRadius: 20,
-    },
+  },
+  closeButton: {
+      position: 'absolute',
+      marginTop:20,
+      top: 20,
+      right: 20,
+      zIndex: 10,
+  },
     drawerText: {
       color: '#fff',
       fontSize: 18,
