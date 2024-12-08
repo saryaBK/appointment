@@ -65,7 +65,7 @@ const MyAppointmentsContent = ({ data }) => {
   )};
 
   return (
-    <View style={[styles.container, { paddingTop: theme.mediumSize + 40,paddingHorizontal:25}]}>
+    <View style={[styles.container,{backgroundColor:theme.bg_dark, paddingTop: theme.mediumSize + 40,paddingHorizontal:25}]}>
       <Text style={[styles.header,{color:theme.font_dark}]}>My Appointments</Text>
       <FlatList
         data={data}
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
   card: {
     padding: 15,
     gap:10,
+    marginHorizontal:2,
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',

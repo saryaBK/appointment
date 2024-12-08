@@ -11,12 +11,6 @@ export const ThemeProvider = ({ children }) => {
     mode: "light",
     main: "#1B1564",
     main_light: "#6A4CF4",
-    bg: "#FFFFFF",
-    dark_font: "black",
-    main_light_font: "#6A4CF4",
-    light_font: "#FFFFFF",
-    dark_btn: "#262350",
-    light_btn: "#6A4CF4",
     /********** */
     dark_color:"#1B1564",
     light_color:"#7551D6",
@@ -45,8 +39,6 @@ export const ThemeProvider = ({ children }) => {
     setTheme((prevTheme) => ({
       ...prevTheme,
       mode: prevTheme.mode === "light" ? "dark" : "light",
-      // bg: prevTheme.mode === "light" ? "#0A014F" : "#FFFFFF",
-      // light_font: prevTheme.mode === "light" ? "#0A014F" : "#FFFFFF",
       dark_color:prevTheme.mode === "light" ? "#1B1564" :"#1B1564" ,
       light_color:prevTheme.mode === "light" ?  "#7551D6":"#7551D6",
       white_color:prevTheme.mode === "light" ?  "#FFFFFF":"#FFFFFF",

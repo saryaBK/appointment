@@ -37,17 +37,19 @@ const SignUpContent = () => {
     const send = await postSignUp(sendData);
     const S_Id = send?.res?.headers?.get('s_id');
     if (S_Id) {
-        await AsyncStorage.setItem('s_id', JSON.stringify(S_Id));
+      await AsyncStorage.setItem("s_id", S_Id);
     }
+    // if (send.data.meta.token) {
+    //   await AsyncStorage.setItem("jwt", send.data.meta.token);
+    // }
     if (send && send?.data?.data) {
-      setUser(send?.data?.data);
+      setUser(send?.data?.data)
       const userData = send?.data?.data;
       if (userData) {
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
-      } 
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['account'] });
+        setTimeout(() => {
+          queryClient.invalidateQueries({queryKey:['account']})
       }, 100);
+      }
     }
     setLod(false); 
   };

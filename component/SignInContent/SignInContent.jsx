@@ -36,9 +36,9 @@ const SignInContent = () => {
     if (S_Id) {
       await AsyncStorage.setItem("s_id", S_Id);
     }
-    if (send.data.meta.token) {
-      await AsyncStorage.setItem("jwt", send.data.meta.token);
-    }
+    // if (send.data.meta.token) {
+    //   await AsyncStorage.setItem("jwt", send.data.meta.token);
+    // }
     if (send && send?.data?.data) {
       const userData = send?.data?.data;
       if (userData) {

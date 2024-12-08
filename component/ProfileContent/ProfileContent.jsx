@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity,Dimensions } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import GlobalButton from '../GlobalButton/GlobalButton';
 import { t } from 'i18next';
@@ -11,12 +11,16 @@ import useTheme from '../../context/useTheme/useTheme';
 import {ImageWrapper, PhoneAndNameWrapper, PhoneWrapper, ProfileImage, TopSectionWrapper, UserInfo, Wrapper} from "./styled";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useQueryClient } from '@tanstack/react-query';
+import DrawerEditAccount from '../DrawerEditAccount/DrawerEditAccount';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { useLanguage } from '../../context/useLang/useLang';
 
 export default function ProfileContent() {
   const { user, setMethodLogType, methodLogType,setUser } = useUser();
   const [lod ,setLod] = useState(false)
   const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
   const queryClient = useQueryClient();
+  const { lang } = useLanguage();
 
   const handleSubmit = async ()=> {
     setLod(true)
@@ -25,19 +29,35 @@ export default function ProfileContent() {
       setUser(null)
       await AsyncStorage.removeItem('user');
       await AsyncStorage.removeItem('s_id');
-      await AsyncStorage.removeItem('jwt');
-      setTimeout(() => {
-        queryClient.invalidateQueries({queryKey:['account']})
-      }, 100);
+      // await AsyncStorage.removeItem('jwt');
     }
     setLod(false)
   }
 
+  const [isOpen, setIsOpen] = useState(false);
+  const { height } = Dimensions.get('window');
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const drawerTranslateY = useSharedValue(height);
+
+  const toggleDrawer = () => {
+    if (isOpen) {
+      drawerTranslateY.value = withSpring(height, { damping: 15 });
+    } else {
+      drawerTranslateY.value = withSpring(height * 0.25, { damping: 15 });
+    }
+    setIsOpen(!isOpen);
+  };
+
+  const animatedDrawerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: drawerTranslateY.value }],
+  }));
+
   return (
+   <>
     <Wrapper style={{paddingTop: theme.mediumSize + 40}}>
     <View style={[{flexDirection:"row",justifyContent:"space-between"}]}>
     <Text style={[styles.title,{color: theme.light }]}>My Profile</Text>
-    <FontAwesome5 name="edit" size={24} color={theme.font_dark} />
+    <FontAwesome5 name="edit" size={24} color={theme.font_dark} onPress={toggleDrawer}/>
     </View>
     <TopSectionWrapper>
         <ImageWrapper>
@@ -48,7 +68,7 @@ export default function ProfileContent() {
           )}
         </ImageWrapper>
         <PhoneAndNameWrapper>
-            <Text style={[styles.name,{color:theme.font_dark}]}>{`${user.first_name} ${user.last_name}`}</Text>
+            <Text style={[styles.name,{color:theme.font_dark}]}>{`${user?.first_name || ''} ${user?.last_name || ''}`}</Text>
 
           <PhoneWrapper>
             <Text style={{color:theme.dark_color,fontWeight:"bold",flexWrap:"wrap"}}>{t('mobile')}</Text>
@@ -63,13 +83,14 @@ export default function ProfileContent() {
         <View style={styles.detailRow}>
           <Text style={styles.label}>Birthday</Text>
           <UserInfo style={styles.value}>
-            {user.birthdate ? user.birthdate : "N/A"}
+            {user.birthday ? user.birthday : "N/A"}
           </UserInfo>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.label}>Gender</Text>
           <UserInfo style={styles.value}>
-            {user.gender ? user.gender : "N/A"}
+          {user.gender ? user.gender === "m" ? lang === "ar" ? "ذكر" : "Men" : 
+            user.gender === "f" ? lang === "ar" ? "أنثى" : "Female": "N/A": "N/A"}
           </UserInfo>
         </View>
         <View style={styles.detailRow}>
@@ -80,7 +101,7 @@ export default function ProfileContent() {
         </View>
       </View>
     </View>
-    <ThemeToggleButton onToggle={toggleTheme} />
+    {/* <ThemeToggleButton onToggle={toggleTheme} /> */}
 
     <GlobalButton 
     style={styles.sendWrapperBtn}
@@ -88,6 +109,8 @@ export default function ProfileContent() {
     loading={lod}
     title={t("Sign out")} />
   </Wrapper>
+  <DrawerEditAccount animatedDrawerStyle={animatedDrawerStyle} toggleDrawer={toggleDrawer}/>
+   </>
   );
 }
 
