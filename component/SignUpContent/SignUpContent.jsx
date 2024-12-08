@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, I18nManager } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useUser } from "../../context/useUser/useUser";
@@ -28,6 +28,7 @@ const SignUpContent = () => {
   const [lod ,setLod] = useState(false)
   const queryClient = useQueryClient()
   const { theme ,setIsEnabled,isEnabled,toggleTheme} = useTheme();
+  const isRTL = I18nManager.isRTL;
   
   const handleSignUp = async (values) => {
     const sendData = {
@@ -44,14 +45,26 @@ const SignUpContent = () => {
   return (
     <View style={[styles.container,{backgroundColor:theme.bg_dark,paddingTop: theme.mediumSize + 40}]}>
       <View style={{ height: 300, position: "relative" }}>
-      <View style={{ position: "absolute", top: 0, right: 0 }}>
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          [isRTL ? "left" : "right"]: 0, // التحكم بالموقع بناءً على اللغة
+        }}
+      >
         <TransparentLogo />
       </View>
       <View
-        style={{position: "absolute",top: 100,right: 135, zIndex: 1,}}>
+        style={{
+          position: "absolute",
+          top: 100,
+          [isRTL ? "left" : "right"]: 135,
+          zIndex: 1,
+        }}
+      >
         <WelcomeLogo />
       </View>
-    </View>
+    </View>     
     <View style={{paddingHorizontal:30}}>
       <Formik
         initialValues={{ email: "", password: "", confirmPassword: "" }}
