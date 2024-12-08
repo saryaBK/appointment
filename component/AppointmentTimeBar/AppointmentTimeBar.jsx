@@ -1,46 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 
-const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate,setSelectedTimeId,specifiedBookingDate}) => {
+const AppointmentTimeBar = ({ dateData, theme, setspecifiedBookingDate, setSelectedTimeId, specifiedBookingDate }) => {
   const [selectedTime, setSelectedTime] = useState(null);
-  
-  const renderItem = ({ item }) => {
-    const isSelected = selectedTime == item.time;
-  
-    return (
-      <TouchableOpacity
-        style={[
-          styles.itemContainer,
-          isSelected && { backgroundColor: theme.dark_color },
-        ]}
-        onPress={() => {
-          setSelectedTime(item.time);
-          setspecifiedBookingDate(item.time);
-          setSelectedTimeId(item.id);
-        }}
-      >
-        <Text
-          style={[
-            styles.itemText,
-            { color: isSelected ? theme.white_color : theme.dark_color },
-          ]}
-        >
-          {item.time.substring(0, 5)}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
 
   return (
     <View>
-      <FlatList
-        data={dateData}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderItem}
+      <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
-      />
+      >
+        {dateData.map((item, index) => {
+          const isSelected = selectedTime == item.time;
+
+          return (
+            <TouchableOpacity
+              key={index.toString()}
+              style={[
+                styles.itemContainer,
+                isSelected && { backgroundColor: theme.dark_color },
+              ]}
+              onPress={() => {
+                setSelectedTime(item.time);
+                setspecifiedBookingDate(item.time);
+                setSelectedTimeId(item.id);
+              }}
+            >
+              <Text
+                style={[
+                  styles.itemText,
+                  { color: isSelected ? theme.white_color : theme.dark_color },
+                ]}
+              >
+                {item.time.substring(0, 5)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
     </View>
   );
 };
@@ -48,8 +46,7 @@ const AppointmentTimeBar = ({dateData,theme,setspecifiedBookingDate,setSelectedT
 const styles = StyleSheet.create({
   listContainer: {
     paddingVertical: 10,
-    // paddingHorizontal: 15,
-    height:100
+    height: 100, // ارتفاع ثابت للحاوية
   },
   itemContainer: {
     padding: 15,
@@ -66,8 +63,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   itemText: {
-    fontWeight:'bold',
-    fontSize:15
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   selectedText: {
     color: '#fff',

@@ -12,6 +12,7 @@ import ThemeToggleButton from "../ThemeToggleButton/ThemeToggleButton";
 import useTheme from "../../context/useTheme/useTheme";
 import WelcomeLogo from "../../assets/Icons/WelcomeLogo";
 import { useLanguage } from "../../context/useLang/useLang";
+import TransparentLogo from "../../assets/Icons/TransparentLogo";
 
 const SignInContent = () => {
   const [lod, setLod] = useState(false);
@@ -33,12 +34,12 @@ const SignInContent = () => {
     setLod(true);
     const send = await postLogIn(sendData);
     const S_Id = send?.res?.headers?.get("s_id");
-    if (S_Id) {
+    if (send && send.res && send.res.ok) {
       await AsyncStorage.setItem("s_id", S_Id);
     }
-    // if (send.data.meta.token) {
-    //   await AsyncStorage.setItem("jwt", send.data.meta.token);
-    // }
+    if (send && send.data && send.data.meta &&send.data.meta.token) {
+      await AsyncStorage.setItem("jwt", send.data.meta.token);
+    }
     if (send && send?.data?.data) {
       const userData = send?.data?.data;
       if (userData) {
@@ -51,11 +52,18 @@ const SignInContent = () => {
   };
 
   return (
-    <View style={[styles.container,{backgroundColor:theme.bg_dark}]}>
-     <View style={{display:"flex",alignItems:"center"}}>
-     <WelcomeLogo />
-     </View>
+    <View style={[styles.container,{backgroundColor:theme.bg_dark,paddingTop: theme.mediumSize + 40}]}>
+    <View style={{ height: 300, position: "relative" }}>
+      <View style={{ position: "absolute", top: 0, right: 0 }}>
+        <TransparentLogo />
+      </View>
+      <View
+        style={{position: "absolute",top: 100,right: 135, zIndex: 1,}}>
+        <WelcomeLogo />
+      </View>
+    </View>
 
+      <View style={{paddingHorizontal:30}}>
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={SignInSchema}
@@ -145,6 +153,7 @@ const SignInContent = () => {
           </View>
         )}
       </Formik>
+      </View>
     </View>
   );
 };
@@ -152,9 +161,9 @@ const SignInContent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    padding: 20,
-    gap:20
+    // justifyContent: "center",
+    // padding: 20,
+    gap:20,
   },
   title: {
     fontSize: 24,

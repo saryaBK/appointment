@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from "react-native";
 import useTheme from "../../context/useTheme/useTheme";
 
 const AppointmentTypeCheckBox = ({ serviceTypeData, setSelectedserviceId, selectedServiceId }) => {
@@ -13,30 +13,30 @@ const AppointmentTypeCheckBox = ({ serviceTypeData, setSelectedserviceId, select
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Choose Service</Text>
-      <FlatList
-        data={serviceTypeData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <TouchableOpacity
-              style={styles.checkboxContainer}
-              onPress={() => toggleSelection(item.id)}
-            >
-              <View
-                style={[
-                  styles.checkbox,
-                  {borderColor:theme.light},
-                  selectedServiceId.includes(item.id) && styles.checkboxSelected,
-                ]}
-              />
-              <Text style={[styles.itemText,{color:theme.font_dark}]}>{item.name}</Text>
-            </TouchableOpacity>
-            <Text style={[styles.priceText,{color:theme.font_gray}]}>{item.price} SAR</Text>
-          </View>
-        )}
-        // contentContainerStyle={{ paddingBottom: 20 }} // إضافة هامش داخلي
-        showsVerticalScrollIndicator={false} // إخفاء شريط التمرير الرأسي
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+      {serviceTypeData.map((item) => (
+        <View key={item.id} style={styles.itemContainer}>
+          <TouchableOpacity
+            style={styles.checkboxContainer}
+            onPress={() => toggleSelection(item.id)}
+          >
+            <View
+              style={[
+                styles.checkbox,
+                { borderColor: theme.light },
+                selectedServiceId.includes(item.id) && styles.checkboxSelected,
+              ]}
+            />
+            <Text style={[styles.itemText, { color: theme.font_dark }]}>
+              {item.name}
+            </Text>
+          </TouchableOpacity>
+          <Text style={[styles.priceText, { color: theme.font_gray }]}>
+            {item.price} SAR
+          </Text>
+        </View>
+      ))}
+    </ScrollView>
     </View>
   );
 };

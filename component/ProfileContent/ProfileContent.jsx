@@ -29,7 +29,7 @@ export default function ProfileContent() {
       setUser(null)
       await AsyncStorage.removeItem('user');
       await AsyncStorage.removeItem('s_id');
-      // await AsyncStorage.removeItem('jwt');
+      await AsyncStorage.removeItem('jwt');
     }
     setLod(false)
   }

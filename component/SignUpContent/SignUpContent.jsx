@@ -10,6 +10,7 @@ import GlobalButton from "../GlobalButton/GlobalButton";
 import { t } from "i18next";
 import WelcomeLogo from "../../assets/Icons/WelcomeLogo";
 import useTheme from "../../context/useTheme/useTheme";
+import TransparentLogo from "../../assets/Icons/TransparentLogo";
 
 // Validation Schema with Yup
 const SignUpSchema = Yup.object().shape({
@@ -35,29 +36,23 @@ const SignUpContent = () => {
     };
     setLod(true);
     const send = await postSignUp(sendData);
-    const S_Id = send?.res?.headers?.get('s_id');
-    if (S_Id) {
-      await AsyncStorage.setItem("s_id", S_Id);
-    }
-    // if (send.data.meta.token) {
-    //   await AsyncStorage.setItem("jwt", send.data.meta.token);
-    // }
-    if (send && send?.data?.data) {
-      setUser(send?.data?.data)
-      const userData = send?.data?.data;
-      if (userData) {
-        setTimeout(() => {
-          queryClient.invalidateQueries({queryKey:['account']})
-      }, 100);
-      }
+    if (send && send.res && send.res.ok) {
+      setMethodLogType('login')
     }
     setLod(false); 
   };
   return (
-    <View style={[styles.container,{backgroundColor:theme.bg_dark}]}>
-      <View style={{display:"flex",alignItems:"center"}}>
+    <View style={[styles.container,{backgroundColor:theme.bg_dark,paddingTop: theme.mediumSize + 40}]}>
+      <View style={{ height: 300, position: "relative" }}>
+      <View style={{ position: "absolute", top: 0, right: 0 }}>
+        <TransparentLogo />
+      </View>
+      <View
+        style={{position: "absolute",top: 100,right: 135, zIndex: 1,}}>
         <WelcomeLogo />
-     </View>
+      </View>
+    </View>
+    <View style={{paddingHorizontal:30}}>
       <Formik
         initialValues={{ email: "", password: "", confirmPassword: "" }}
         validationSchema={SignUpSchema}
@@ -142,6 +137,7 @@ const SignUpContent = () => {
           </View>
         )}
       </Formik>
+      </View>
     </View>
   );
 };
@@ -149,8 +145,6 @@ const SignUpContent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    padding: 20,
     gap:20
   },
   title: {
