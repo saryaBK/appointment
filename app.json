@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "appointment-app",
+    "name": "appointment",
     "slug": "appointment",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -41,7 +41,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "sarya.bk": "com.bilal.bk.appointment",
       "package": "com.saryabk.appointment"
     },
     "web": {
@@ -49,7 +48,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "059142f9-2e69-4e29-aa38-bb1f6393c954"
+        "projectId": "9e56b7dc-d482-4ec2-ae57-6a1210f433ad"
       }
     },
     "owner": "saryabk"
